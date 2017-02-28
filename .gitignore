@@ -50,4 +50,5 @@ Temporary Items
 /classes
 .class
 /.idea
-pom.xml
+.project
+.classpath
