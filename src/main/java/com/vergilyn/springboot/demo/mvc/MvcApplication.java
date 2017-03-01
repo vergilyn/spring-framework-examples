@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
  * 7. 对自定义Favicon的支持。
  */
 @SpringBootApplication
-@Controller
 public class MvcApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MvcApplication.class, args);

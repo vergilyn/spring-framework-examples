@@ -36,7 +36,7 @@ public class ErrorPageConfig {
 	}
 
 	/* 重写不同错误码的显示页面。 */
-	private static class CustomErrorPage implements
+	public class CustomErrorPage implements
 			EmbeddedServletContainerCustomizer {
 		@Override
 		public void customize(ConfigurableEmbeddedServletContainer container) {

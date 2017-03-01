@@ -1,4 +1,4 @@
-package com.vergilyn.springboot.demo.mvc.config;
+package com.vergilyn.springboot.demo.jersey;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
