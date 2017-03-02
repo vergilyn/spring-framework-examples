@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpelProperty {
 	
-	@Value("#{spel.name}")
+	@Value("${spel.name}")
 	private String spelName;
 	/* base：指BaseProperty.class(默认为baseProperty)，因为定义了@Component("base")
 	 * baseSong：并不是*.properties中的key
@@ -23,7 +23,7 @@ public class SpelProperty {
 	 */
 	@Value("#{ '${spel.mix}' }")
 	private String mixSong;
-	@Value("#{base.${spel.mix} }") //组合，特别.后面跟的是对象属性。所以要是class中的属性，而不是properties中的key
+	@Value("#{base. ${spel.mix} }") //组合，特别.后面跟的是对象属性。所以要是class中的属性，而不是properties中的key
 	private String mixSong2;
 	
 	public String getMixSong2() {
