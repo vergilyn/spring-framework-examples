@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpelProperty {
 	
-	@Value("${spel.name}")
+	@Value("#{spel.name}")
 	private String spelName;
 	/* base：指BaseProperty.class(默认为baseProperty)，因为定义了@Component("base")
 	 * baseSong：并不是*.properties中的key
 	 */
 	@Value("#{base.baseSong}")
 	private String spelSong;
-	/* // @Value("${ '#{base.baseSong}' }") //这个不支持。
+	/* // @Value("${ '#{base.baseSong}' }") //这个不支持。因为#开头的才是spel。
 	 * 解析：由内往外，${spel.mix} = baseSong。然后在spel表达式中，('')表示定义字符串。
 	 * 所以 #{'baseSong'} = baseSong
 	 */
