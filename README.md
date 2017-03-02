@@ -3,6 +3,7 @@ spring boot study demo, by vergilyn。<br/>
 
 参考文档：<br/>
   《spring-boot-中文参考指南.pdf》<br/>
+  [《Spring Boot Reference Guide》](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)<br/>
 
 参考github demo：<br/>
  [spring boot mybatis](https://github.com/mybatis/spring-boot-starter.git) <br/>
