@@ -5,4 +5,6 @@ spring boot study demo, by vergilyn。
   《spring-boot-中文参考指南.pdf》
 
 参考github demo：
- https://github.com/mybatis/spring-boot-starter.git
+ [spring boot mybatis](https://github.com/mybatis/spring-boot-starter.git)
+ [spring boot office](https://github.com/spring-projects/spring-boot.git)
+ [spring boot samples](https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples)
