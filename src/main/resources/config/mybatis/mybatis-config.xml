@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-        <package name="com.vergilyn.springboot.demo.mybatis.domain"/>
+        <package name="com.vergilyn.demo.springboot.mybatis.domain"/>
     </typeAliases>
     <mappers>
         <mapper resource="config/mybatis/mapper/CityMapper.xml"/>

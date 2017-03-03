@@ -11,10 +11,10 @@ import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.alibaba.fastjson.JSON;
-import com.vergilyn.spring.demo.value.SpelValueApplication;
-import com.vergilyn.spring.demo.value.property.BaseProperty;
-import com.vergilyn.spring.demo.value.property.SpelBasisProperty;
-import com.vergilyn.spring.demo.value.property.SpelProperty;
+import com.vergilyn.demo.spring.value.SpelValueApplication;
+import com.vergilyn.demo.spring.value.property.BaseProperty;
+import com.vergilyn.demo.spring.value.property.SpelBasisProperty;
+import com.vergilyn.demo.spring.value.property.SpelProperty;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SpelValueApplication.class)
