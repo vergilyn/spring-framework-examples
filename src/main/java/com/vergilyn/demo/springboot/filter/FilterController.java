@@ -13,7 +13,7 @@ public class FilterController {
 
 	@GetMapping("/filter")
 	public String index() {
-		return "servlet/filter";
+		return "filter/filter";
 	}
 
 	@PostMapping("/appendFilter")
