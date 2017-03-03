@@ -4,13 +4,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 
+import com.vergilyn.demo.springboot.filter.FilterApplication;
+
 
 
 @SpringBootApplication
-@Controller
 public class ProfileApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(ProfileApplication.class, args);
+		SpringApplication app = new SpringApplication(FilterApplication.class);
+//		app.setAdditionalProfiles("dev");	//代码指定
+		app.run(args);
 	}
 
 }

@@ -1,0 +1,17 @@
+一、过滤器filter
+  对于实现过滤器的2中方式：
+    1. 基于servlet的，xx implements Filter。（javax.servlet.Filter）
+	
+    2. 基于spring mvc的，xx extends OncePerRequestFilter。（org.springframework.web.filter.OncePerRequestFilter）
+	  除开OncePerRequestFilter，spring mvc中还定义了很多别的filter，参考spiring-web.jar中org.springframework.web.filter。
+	  当然，它们全都implements Filter。
+
+  2种方式的区别：
+    1. 如果spring boot中是以servlet形式，那么在application中必须加入@ServletComponentScan，确保servlet、filter、listener被正确扫描注入。
+	  （当然，如果不用@ServletComponentScan，也可以代码注入servlet、filter、listener）
+	
+	2. 如果是基于spring mvc。 只需要保证xx被正确注入spring boot。所以无需@ServletComponentScan。
+
+特别：
+  因为HttpServletRequest.getParameterMap()无法被改变，所以需要extends HttpServletRequestWrapper并重写部分方法。
+  参考： https://my.oschina.net/alexnine/blog/730706

@@ -1,4 +1,4 @@
-package com.vergilyn.demo.servlet.filter;
+package com.vergilyn.demo.springboot.filter.custom;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,6 +16,10 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.springframework.context.annotation.Profile;
+
+import com.vergilyn.demo.springboot.filter.common.FilterRule;
+import com.vergilyn.demo.springboot.filter.common.ParameterRequestWrapper;
 
 
 /**
@@ -23,43 +27,26 @@ import org.apache.commons.lang.math.NumberUtils;
  * SpingBootApplication加入@ServletComponentScan扫描注入webFilter。
  */
 @WebFilter(filterName="customFilter",urlPatterns="/*")
-public class CustomFilter implements Filter {
-
+@Profile("servlet")
+public class ServletFilter implements Filter {
+	private final static String clazz = ServletFilter.class.getSimpleName();
+	
 	@Override
 	public void destroy() {
-		System.out.println("CustomFilter >>>> destroy().");
+		System.out.println(clazz + " >>>> destroy().");
 	}
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp,FilterChain chain) throws IOException, ServletException {
-		System.out.println("CustomFilter >>>> doFilter(...).");
-		req = new ParameterRequestWrapper((HttpServletRequest)req, filterRule(req));
+		System.out.println(clazz + " >>>> doFilter(...).");
+		req = new ParameterRequestWrapper((HttpServletRequest)req, FilterRule.filterRule(req));
 		chain.doFilter(req, resp);
 	}
-	/**
-	 * 自定义：过滤器逻辑方法
-	 * @param req
-	 * @return
-	 */
-	private Map<String, String[]> filterRule(ServletRequest req){
-		Map<String, String[]> map = new HashMap<String, String[]>(req.getParameterMap());
-		Set<Entry<String, String[]>> entrySet = map.entrySet();
-		for (Entry<String, String[]> entry : entrySet) {
-			String[] values = entry.getValue();
-			for (int i = 0; i < values.length; i++) {
-				if(NumberUtils.isNumber(values[i])){
-					values[i] = NumberUtils.toInt(values[i]) * 10 + "";
-				}
-				else values[i] += "_filter";
-			}
-			entry.setValue(values);
-		}
-		return map;
-	}
+
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		System.out.println("CustomFilter >>>> init(...).");
+		System.out.println(clazz + " >>>> init(...).");
 	}
 
 }

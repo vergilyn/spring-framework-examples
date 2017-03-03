@@ -1,4 +1,4 @@
-package com.vergilyn.demo.servlet;
+package com.vergilyn.demo.springboot.filter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class ServletController {
+public class FilterController {
 
 	@GetMapping("/filter")
 	public String index() {
