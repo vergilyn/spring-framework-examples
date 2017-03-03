@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import com.vergilyn.demo.springboot.filter.common.FilterRule;
 import com.vergilyn.demo.springboot.filter.common.ParameterRequestWrapper;
@@ -26,7 +27,7 @@ import com.vergilyn.demo.springboot.filter.common.ParameterRequestWrapper;
  * @WebFilter：将一个实现了javax.servlet.Filter接口的类定义为过滤器
  * SpingBootApplication加入@ServletComponentScan扫描注入webFilter。
  */
-@WebFilter(filterName="customFilter",urlPatterns="/*")
+@WebFilter(filterName="customFilter",urlPatterns="/needFilter")
 @Profile("servlet")
 public class ServletFilter implements Filter {
 	private final static String clazz = ServletFilter.class.getSimpleName();

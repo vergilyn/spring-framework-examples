@@ -21,7 +21,6 @@ public class FilterApplication {
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(FilterApplication.class);
-		// mvc或servlet，servlet需要@ServletComponentScan。
 		app.setAdditionalProfiles(PROFILE_MVC);
 		app.run(args);
 	}

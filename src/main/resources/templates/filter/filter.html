@@ -3,14 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <script type="text/javascript" src="./static/common/jquery-2.1.4.js"></script>
-<title>servlet filter</title>
+<title>spring boot filter</title>
 <script type="text/javascript">
 
 	/*<![CDATA[*/
-	function appendFilter() {
+	function filter(flag) {
+		var url = flag ? '/needFilter' : '/notFilter'
 		$.ajax({
 			type : 'POST',
-			url : '/appendFilter',
+			url : url,
 			data : {"name":$("#name").val(),"age":$("#age").val()},
 			success : function(r) {
 				$("#result").text(JSON.stringify(r));
@@ -24,7 +25,7 @@
 </script>
 </head>
 <body>
-	<h4>servlet filter</h4>
+	<h4>spring boot filter</h4>
 	<div style="font-size: 12px">
 		说明： <br/>
 		&nbsp;&nbsp; 当参数name能被转换成数字时，过滤器处理返回：x * 10。否则，返回：x_filter。<br/>
@@ -32,7 +33,9 @@
 	</div><br/>
 	name:<input type="text" id="name" /> &nbsp;&nbsp;
 	age:<input type="text" id="age" /> 
-	<input type="button" value="请求" onclick="appendFilter()" /><br/>
+	<input type="button" value="不过滤" onclick="filter(false)" /> &nbsp;&nbsp;
+	<input type="button" value="过滤" onclick="filter(true)" />
+	<br/>
 	<div style="font-size: 12px;">结果：<font id="result" style="font-weight: bold;"></font></div>
 </body>
 </html>

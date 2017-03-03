@@ -16,7 +16,7 @@ public class FilterController {
 		return "filter/filter";
 	}
 
-	@PostMapping("/appendFilter")
+	@PostMapping({"/needFilter","/notFilter"})
 	@ResponseBody
 	public Map<String, Object> setString(String name,int age) {
 		Map<String, Object> map = new HashMap<String, Object>();
