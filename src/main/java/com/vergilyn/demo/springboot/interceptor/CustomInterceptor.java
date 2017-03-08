@@ -9,14 +9,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.vergilyn.demo.springboot.filter.common.FilterRule;
 import com.vergilyn.demo.springboot.filter.common.ParameterRequestWrapper;
 
-
 public class CustomInterceptor implements HandlerInterceptor{
 	private final static String clazz = CustomInterceptor.class.getSimpleName();
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-		String requestURI = request.getRequestURI();
 		System.out.println(clazz + " >>>> preHandle(...), 在请求处理之前进行调用（Controller方法调用之前）.");
+		
+		String requestURI = request.getRequestURI();
 		//true表示继续,false表示拦截掉
 		boolean rs = requestURI.contains("need") ? false : true;
 		if(!rs){
