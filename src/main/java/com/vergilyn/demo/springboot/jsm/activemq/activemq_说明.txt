@@ -1,7 +1,8 @@
-1、  注意application-activemq.properties中的配置，是queue还是topic、
+1、  注意application-activemq.properties中的配置，是queue还是topic。
+  
 
 2、 如果是spring集成activemq，则需要安装activemq server。
-       如果是spring-boot，则会用内存的activemq。（当然，使用ActiveMQ Server会更理想）
+       如果是spring-boot，则会用内存的activemq。（当然，使用ActiveMQ Server会更理想。需在application-activemq.properties中指定url）
 
 3、JMS的2种消息模型
 

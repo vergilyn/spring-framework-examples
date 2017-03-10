@@ -1,9 +1,11 @@
 package com.vergilyn.demo.spring.timer;
 
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+// @EnableScheduling
 public class SpringTimmer {
 	
 //	@Transactional(readOnly=false,rollbackFor=Exception.class,propagation=Propagation.REQUIRED)
