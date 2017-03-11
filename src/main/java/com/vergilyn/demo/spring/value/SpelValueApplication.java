@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 
 /* spring中@Value的用法： 
  * 	1、${ property : default_value }
- *  2、#{ obj.property? : default_value }
+ *  2、#{ obj.property ?: default_value }
  *  3、(混合，不可逆)#{ '${}' }
  * 备注：#开头的是SpEL(spring表达式语言，Spring Expression Language)，从spring3开始引入
  * 参考：http://www.cnblogs.com/larryzeal/p/5910149.html
