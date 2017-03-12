@@ -7,6 +7,6 @@ import com.vergilyn.demo.springboot.mybatis.domain.Hotel;
 @Mapper
 public interface HotelMapper {
 
-	Hotel selectByCityId(int city_id);
+	Hotel selectByHotelId(int city_id);
 
 }

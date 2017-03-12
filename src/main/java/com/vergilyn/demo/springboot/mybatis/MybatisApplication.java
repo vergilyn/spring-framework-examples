@@ -28,7 +28,9 @@ import com.vergilyn.demo.springboot.mybatis.mapper.HotelMapper;
 public class MybatisApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MybatisApplication.class, args);
+		SpringApplication app = new SpringApplication(MybatisApplication.class);
+		app.setAdditionalProfiles("mybatis");
+		app.run(args);
 	}
 	@Autowired
 	private CityDao cityDao;
@@ -42,7 +44,7 @@ public class MybatisApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		System.out.println(this.cityDao.selectCityById(1));
 		System.out.println(this.cityMapper.selectByAnnotation(1));
-		System.out.println(this.hotelMapper.selectByCityId(1));
+		System.out.println(this.hotelMapper.selectByHotelId(1));
 	}
 
 }

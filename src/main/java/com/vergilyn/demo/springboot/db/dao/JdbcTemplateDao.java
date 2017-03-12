@@ -25,7 +25,7 @@ public class JdbcTemplateDao {
 		String sql = " select count(*) from child";
 		if(true){
 			sql += "  where child_name = :name ";
-			param.put("name", "1");
+			param.put("name", "周一");
 		}
 		Long count = this.namedJdbc.queryForObject(sql, param, Long.class);
 		System.out.println(count);
