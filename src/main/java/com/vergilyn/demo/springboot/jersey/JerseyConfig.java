@@ -17,5 +17,6 @@ public class JerseyConfig extends ResourceConfig {
 	
 	public JerseyConfig() {
 		register(JerseyController.class);
+//		packages("com.vergilyn.demo.springboot.jersey"); // 通过packages注册。
 	}
 }
