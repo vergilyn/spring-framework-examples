@@ -13,7 +13,7 @@
 			url : '/setString',
 			data : {"value":$("#value").val()},
 			success : function(r) {
-				console.log(r);
+				alert(r.msg);
 			},
 			error : function() {
 				alert('error!')
@@ -27,7 +27,7 @@
 			contentType : 'application/json',
 			url : '/getString',
 			success : function(r) {
-				console.log(r);
+                alert(r.msg);
 				$("#result").text(JSON.stringify(r));
 			},
 			error : function() {
@@ -41,7 +41,7 @@
 			contentType : 'application/json',
 			url : '/getCache?id='+$("#cacheId").val(),
 			success : function(r) {
-				console.log(r);
+                alert(r.msg);
 				$("#cacheResult").text(JSON.stringify(r));
 			},
 			error : function() {
