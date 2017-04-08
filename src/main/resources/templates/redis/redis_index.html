@@ -41,7 +41,6 @@
 			contentType : 'application/json',
 			url : '/getCache?id='+$("#cacheId").val(),
 			success : function(r) {
-                alert(r.msg);
 				$("#cacheResult").text(JSON.stringify(r));
 			},
 			error : function() {

@@ -16,7 +16,7 @@ public class RedisCacheBean implements Serializable{
 		super();
 		this.id = id;
 		this.name = name;
-		this.date = new SimpleDateFormat("yyyyMMddHHmmsss").format(date);
+		this.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:sss").format(date);
 		this.quantity = quantity;
 	}
 	public String getId() {
