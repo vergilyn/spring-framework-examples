@@ -23,7 +23,6 @@ import com.vergilyn.demo.springboot.filter.common.ParameterRequestWrapper;
  * 2017年3月3日
  */
 @WebFilter(urlPatterns="/needFilter") //加入此注解则application必须加入@ServletComponentScan
-// @Component
 @Profile("mvc")
 public class SpringMvcFilter extends OncePerRequestFilter {
 	private final static String clazz = SpringMvcFilter.class.getSimpleName();

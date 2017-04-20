@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.ServletRequest;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 public class FilterRule {
 	/**

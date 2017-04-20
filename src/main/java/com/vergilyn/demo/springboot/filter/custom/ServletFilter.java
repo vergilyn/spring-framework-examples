@@ -1,10 +1,6 @@
 package com.vergilyn.demo.springboot.filter.custom;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,7 +11,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +19,7 @@ import com.vergilyn.demo.springboot.filter.common.ParameterRequestWrapper;
 
 
 /**
- * @WebFilter：将一个实现了javax.servlet.Filter接口的类定义为过滤器
+ * @ WebFilter：将一个实现了javax.servlet.Filter接口的类定义为过滤器
  * SpingBootApplication加入@ServletComponentScan扫描注入webFilter。
  */
 @WebFilter(filterName="customFilter",urlPatterns="/needFilter")
