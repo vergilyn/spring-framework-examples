@@ -3,6 +3,7 @@ package com.vergilyn.demo.springboot.enums.bean;
 import com.vergilyn.demo.constant.enums.SongsEnum;
 
 /**
+ * 比较麻烦,要定义与枚举类成员一样的属性。
  * @author VergiLyn
  * @bolg http://www.cnblogs.com/VergiLyn/
  * @date 2017/4/9

@@ -3,42 +3,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript" src="./static/common/jquery-2.1.4.js"></script>
+    <link rel="stylesheet" th:href="@{/css/table.css}" />
     <title>spring boot redis</title>
 
-    <style>
-        .table thead th {
-            background-color: rgb(81, 130, 187);
-            color: #fff;
-            border-bottom-width: 0;
-        }
-
-        /* Column Style */
-        .table td {
-            color: #000;
-        }
-        /* Heading and Column Style */
-        .table tr, .table th {
-            border-width: 1px;
-            border-style: solid;
-            border-color: rgb(81, 130, 187);
-        }
-
-        /* Padding and font style */
-        .table td, .table th {
-            padding: 5px 10px;
-            font-size: 12px;
-            font-family: Verdana;
-            font-weight: bold;
-        }
-
-        /* Alternating background colors */
-        .table tr:nth-child(even) {
-            background: #B0E2FF
-        }
-        .table tr:nth-child(odd) {
-            background: #AEEEEE
-        }
-    </style>
+    <script th:inline="javascript">
+        var jsons = [[${jsons}]];
+    </script>
 </head>
 <body>
     <h4>enums show.</h4>
@@ -48,7 +18,19 @@
         但，每次都需要更改代码。所以，更好的当然是数据库来维护，有界面给使用者自己去维护。<br/>
         (只是自己单纯的一种思路，并不觉得特别理想，希望能接触到更好的此类设计。)<br/>
     </p>
+    <div id="json" th:text="${jsons}">
 
+    </div>
+    <div>
+        以下：<br/>
+        public class SongsBean {<br/>
+            private SongsEnum songsEnum;<br/>
+            private int index;<br/>
+            private String singer;<br/>
+            private String name;<br/>
+            private String date;<br/>
+        }<br/>
+    </div>
     <table class="table">
         <thead>
         <tr>
@@ -59,11 +41,37 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="song: ${songs}">
-            <td th:text="${song.index}"></td>
-            <td th:text="${song.singer}"></td>
-            <td th:text="${song.name}"></td>
-            <td th:text="${song.date}"></td>
+        <!--/*@thymesVar id="beans" type="com.vergilyn.demo.springboot.enums.bean.SongsBean"*/-->
+        <tr th:each="bean: ${beans}">
+            <td th:text="${bean.index}"></td>
+            <td th:text="${bean.singer}"></td>
+            <td th:text="${bean.name}"></td>
+            <td th:text="${bean.date}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div>
+        以下：<br/>
+        public class SongsDto {<br/>
+           private SongsEnum song;<br/>
+        }<br/>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:text="序号">序号</th>
+            <th th:text="歌手">歌手</th>
+            <th th:text="歌名">歌名</th>
+            <th th:text="发行时间">发行时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dto: ${dtos}">
+            <td th:text="${dto.song.index}"></td>
+            <td th:text="${dto.song.singer}"></td>
+            <td th:text="${dto.song.name}"></td>
+            <td th:text="${dto.song.date}"></td>
         </tr>
         </tbody>
     </table>

@@ -1,0 +1,32 @@
+.table thead th {
+    background-color: rgb(81, 130, 187);
+    color: #fff;
+    border-bottom-width: 0;
+}
+
+/* Column Style */
+.table td {
+    color: #000;
+}
+/* Heading and Column Style */
+.table tr, .table th {
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(81, 130, 187);
+}
+
+/* Padding and font style */
+.table td, .table th {
+    padding: 5px 10px;
+    font-size: 12px;
+    font-family: Verdana;
+    font-weight: bold;
+}
+
+/* Alternating background colors */
+.table tr:nth-child(even) {
+    background: #B0E2FF
+}
+.table tr:nth-child(odd) {
+    background: #AEEEEE
+}
