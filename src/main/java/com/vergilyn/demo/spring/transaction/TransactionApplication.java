@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author VergiLyn
- * @bolg http://www.cnblogs.com/VergiLyn/
+ * @blog http://www.cnblogs.com/VergiLyn/p/6956917.html
  * @date 2017/5/21
  */
 @SpringBootApplication
@@ -14,7 +14,6 @@ public class TransactionApplication {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(TransactionApplication.class);
-        app.setAdditionalProfiles("mybatis");
         app.run(args);
     }
 }

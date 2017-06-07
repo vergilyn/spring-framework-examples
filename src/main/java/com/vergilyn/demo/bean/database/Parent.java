@@ -33,4 +33,12 @@ public class Parent implements Serializable{
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
+
+    @Override
+    public String toString() {
+        return "Parent{" +
+                "parentId=" + parentId +
+                ", parentName='" + parentName + '\'' +
+                '}';
+    }
 }

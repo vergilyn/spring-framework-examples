@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author VergiLyn
- * @bolg http://www.cnblogs.com/VergiLyn/
+ * @blog http://www.cnblogs.com/VergiLyn/
  * @date 2017/5/20
  */
 @Service
@@ -21,33 +21,58 @@ public class JdbcMainService {
     private JdbcNewService newService;
 
 
-
     @Transactional(propagation = Propagation.REQUIRED)
-    public void error(){
+    public void updateCur() {
         Parent init = parentDao.getEntity(TransactionApplication.ID);
-        System.out.println("ini select: " + init);
+        System.out.println("init select: " + init);
 
-        Parent newu = newService.updateNew(init);
-        System.out.println("new update: " + newu);
+        Parent curu = this.updateCur(init);
+        System.out.println("curu update: " + curu);
 
 
         Parent curs = parentDao.getEntity(TransactionApplication.ID);
-        System.out.println("cur select: " + curs);
+        System.out.println("curs select: " + curs);
 
         Parent news = newService.getEntity(TransactionApplication.ID);
-        System.out.println("new select: " + news);
+        System.out.println("news select: " + news);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void right(){
-        Parent p1 = parentDao.getEntity(TransactionApplication.ID); // 1: 周父
-        System.out.println(p1);
+    public void updateNew() {
+        Parent init = parentDao.getEntity(TransactionApplication.ID);
+        System.out.println("init select: " + init);
 
-        Parent p2 = newService.updateNew(p1);   // 1: 周父1
-        System.out.println(p2);
+        Parent newu = newService.updateNew(init);
+        System.out.println("newu update: " + newu);
 
 
-        Parent p3 = newService.getEntity(TransactionApplication.ID); //期望 >> 1: 周父-1  实际 >> 1: 周父
-        System.out.println(p3);
+        Parent curs = parentDao.getEntity(TransactionApplication.ID);
+        System.out.println("curs select: " + curs);
+
+        Parent news = newService.getEntity(TransactionApplication.ID);
+        System.out.println("news select: " + news);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void getCur(){
+        Parent s1 = parentDao.getEntity(TransactionApplication.ID);
+        System.out.println("s1 select: " + s1);
+
+        // 利用断点: 手动修改数据库的值  '周父' -> '周父s2'
+        Parent s2 = parentDao.getEntity(TransactionApplication.ID);
+        System.out.println("s2 select: " + s2);
+
+        // 利用断点: 手动修改数据库的值  '周父' -> '周父s3'
+        Parent s3 = parentDao.getEntity(TransactionApplication.ID);
+        System.out.println("s3 select: " + s3);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Parent updateCur(Parent parent) {
+        Parent p2 = new Parent();
+        p2.setParentId(parent.getParentId());
+        p2.setParentName(parent.getParentName() + "@cur");
+        parentDao.update(p2);
+        return p2;
     }
 }

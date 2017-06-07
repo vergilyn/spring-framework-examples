@@ -18,7 +18,6 @@ package org.springframework.scheduling.support;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.logging.SimpleFormatter;
 
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
