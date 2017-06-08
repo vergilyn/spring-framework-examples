@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * @author VergiLyn
- * @bolg http://www.cnblogs.com/VergiLyn/
+ * @blog http://www.cnblogs.com/VergiLyn/
  * @date 2017/5/16
  */
 @Service

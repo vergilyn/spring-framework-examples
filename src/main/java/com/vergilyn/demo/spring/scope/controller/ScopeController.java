@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author VergiLyn
- * @bolg http://www.cnblogs.com/VergiLyn/
+ * @blog http://www.cnblogs.com/VergiLyn/
  * @date 2017/5/16
  */
 @Controller

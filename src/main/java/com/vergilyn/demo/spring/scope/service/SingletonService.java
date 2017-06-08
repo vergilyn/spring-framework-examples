@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * @author VergiLyn
- * @bolg http://www.cnblogs.com/VergiLyn/
+ * @blog http://www.cnblogs.com/VergiLyn/
  * @date 2017/5/16
  */
 @Service
@@ -21,8 +21,10 @@ public class SingletonService {
         return cache;
     }
 
-    public Integer getIndex() {
+    public  Integer getIndex() {
         cache.put("index-"+index,index);
         return index++;
     }
 }
+
+
