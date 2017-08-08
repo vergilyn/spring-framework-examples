@@ -1,18 +1,12 @@
 package com.vergilyn.demo.springboot.jersey;
 
-import java.util.Map;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.springframework.stereotype.Component;
+import com.alibaba.fastjson.JSON;
+import com.vergilyn.demo.constant.Constant;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vergilyn.demo.constant.Constant;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.Map;
 
 /*
  * 所有注册的端点都应该被@Components和HTTP资源annotations（比如@GET）注解。
@@ -36,7 +30,8 @@ public class JerseyController {
 	@Path("/post")
 	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})  
     @Produces(MediaType.APPLICATION_JSON) 
-	public Map<String, Object> postMessage() {
+	public Map<String, Object> postMessage(Map<String,Object> param) {
+	    System.out.println(JSON.toJSONString(param));
 		return Constant.map;
 	}
 }

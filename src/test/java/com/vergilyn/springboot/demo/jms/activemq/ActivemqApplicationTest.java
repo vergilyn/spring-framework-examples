@@ -1,7 +1,8 @@
 package com.vergilyn.springboot.demo.jms.activemq;
 
-import javax.jms.JMSException;
-
+import com.vergilyn.demo.constant.Constant;
+import com.vergilyn.demo.springboot.jms.activemq.ActivemqApplication;
+import com.vergilyn.demo.springboot.jms.activemq.queue.QueueProducer;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,9 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.vergilyn.demo.constant.Constant;
-import com.vergilyn.demo.springboot.jsm.activemq.ActivemqApplication;
-import com.vergilyn.demo.springboot.jsm.activemq.queue.ActivemqQueueProducer;
+import javax.jms.JMSException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,7 +23,7 @@ public class ActivemqApplicationTest {
 	public OutputCapture outputCapture = new OutputCapture();
 
 	@Autowired
-	private ActivemqQueueProducer producer;
+	private QueueProducer producer;
 
 	@Test
 	public void sendObject() throws InterruptedException, JMSException {
