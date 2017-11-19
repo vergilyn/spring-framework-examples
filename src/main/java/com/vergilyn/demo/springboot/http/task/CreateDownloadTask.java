@@ -18,6 +18,7 @@ import com.vergilyn.demo.springboot.http.bean.CompleteFileBean;
 import com.vergilyn.demo.springboot.http.util.FileMergeUtil;
 import com.vergilyn.demo.springboot.http.util.RedisUtils;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,8 +150,8 @@ public class CreateDownloadTask {
             }
             Date end = new Date();
             // 简单计算下载速度, 我把连接时间也算在内了
-            long speed = (block.getEndOffset() - block.getBeginOffset()) / 1024
-                    / (end.getTime() - begin.getTime()) * 1000;
+            long speed = (block.getEndOffset() - block.getBeginOffset()) / 1024L
+                    / (end.getTime() - begin.getTime()) * 1000L;
             System.out.println(block.getBlockFileName() + " aver-speed: " + speed + " kb/s");
         }
 
@@ -170,6 +171,14 @@ public class CreateDownloadTask {
         Date end = new Date();
 
         System.out.println("merge time consume: " + (end.getTime() - begin.getTime()) + " ms");
+
+        // 合并成功, 删除块文件.
+        // FIXME下面代码不一定能删除, 具体调试
+        try {
+            FileUtils.forceDeleteOnExit(dir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
