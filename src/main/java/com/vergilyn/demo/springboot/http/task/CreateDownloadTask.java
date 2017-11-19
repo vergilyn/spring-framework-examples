@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
@@ -126,10 +127,12 @@ public class CreateDownloadTask {
         OutputStream os = null;
         for (String s : range) {
             BlockFileBean block = JSON.parseObject(s, BlockFileBean.class);
+            Date begin = new Date();
             try {
                 // 执行下载
                 // FIXME 实际中, 建议开多个线程下载, 避免某块下载过慢导致其余块下载任务阻塞
                 URLConnection conn = new URL(block.getDownloadUrl()).openConnection();
+                // -1: 因为bytes=0-499, 表示contentLength=500.
                 conn.setRequestProperty(HttpHeaders.RANGE, "bytes=" + block.getBeginOffset() + "-" + (block.getEndOffset() - 1));
                 conn.setDoOutput(true);
 
@@ -144,12 +147,18 @@ public class CreateDownloadTask {
                 IOUtils.closeQuietly(is);
                 IOUtils.closeQuietly(os);
             }
+            Date end = new Date();
+            // 简单计算下载速度, 我把连接时间也算在内了
+            long speed = (block.getEndOffset() - block.getBeginOffset()) / 1024
+                    / (end.getTime() - begin.getTime()) * 1000;
+            System.out.println(block.getBlockFileName() + " aver-speed: " + speed + " kb/s");
         }
 
         return path;
     }
 
     public void mergeBlock(String path) {
+        Date begin = new Date();
         File dir = new File(path);
         File[] files = dir.listFiles();
 
@@ -158,14 +167,9 @@ public class CreateDownloadTask {
 
         FileMergeUtil.randomAccessFile(dest, files, 8 * 1024);
 
+        Date end = new Date();
+
+        System.out.println("merge time consume: " + (end.getTime() - begin.getTime()) + " ms");
     }
 
-    public static void main(String[] args) {
-        File dir = new File("D:\\TEMP\\72d38f5a-bd25-44b3-b1b9-1f7b29215277");
-        File[] files = dir.listFiles();
-
-        String dest = "D:\\TEMP\\72d38f5a-bd25-44b3-b1b9-1f7b29215277.EXE";
-        FileMergeUtil.randomAccessFile(dest, files, 8 * 1024);
-
-    }
 }
