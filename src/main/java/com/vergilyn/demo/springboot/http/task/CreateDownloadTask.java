@@ -173,7 +173,7 @@ public class CreateDownloadTask {
         System.out.println("merge time consume: " + (end.getTime() - begin.getTime()) + " ms");
 
         // 合并成功, 删除块文件.
-        // FIXME下面代码不一定能删除, 具体调试
+        // FIXME 下面代码不一定能删除, 具体调试
         try {
             FileUtils.forceDeleteOnExit(dir);
         } catch (IOException e) {
