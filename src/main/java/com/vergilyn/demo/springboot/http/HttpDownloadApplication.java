@@ -1,9 +1,10 @@
 package com.vergilyn.demo.springboot.http;
 
 import com.vergilyn.demo.springboot.http.task.CreateDownloadTask;
+import com.vergilyn.demo.springboot.http.task.DownloadScheduler;
+import com.vergilyn.demo.springboot.http.task.MergeScheduler;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,8 +21,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 public class HttpDownloadApplication implements CommandLineRunner{
     @Autowired
     CreateDownloadTask task;
+    @Autowired
+    DownloadScheduler downloadScheduler;
+    @Autowired
+    MergeScheduler mergeScheduler;
 
-    @Qualifier("stringRedisTemplate")
     @Autowired
     StringRedisTemplate redisTemplate;
 
@@ -34,18 +38,17 @@ public class HttpDownloadApplication implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
         System.out.println("run..............");
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
+
+        // 32.6mb = 33,441kb
         String music = "https://d1.music.126.net/dmusic/cloudmusicsetup_2_2_2_195462.exe";
 
-        String taskKey = this.task.createTask(music);
-        if(redisTemplate.hasKey(taskKey)){
-            System.out.println("begin download..............");
-            String path = task.execDownloadTask(taskKey);
-            System.out.println("end download..............");
+        this.task.createTask(music);
+        this.downloadScheduler.execDownloadTask();
 
-            System.out.println("begin merge..............");
-            task.mergeBlock(path);
-            System.out.println("end merge..............");
+        // FIXME 因为是多线程下载, 这里测试自己调整时间
+        Thread.sleep(20 * 1000);
 
-        }
+        mergeScheduler.mergeBlock();
     }
 }

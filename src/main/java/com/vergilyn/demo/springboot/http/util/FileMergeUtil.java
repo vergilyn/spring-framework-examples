@@ -11,6 +11,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
@@ -44,27 +45,42 @@ public class FileMergeUtil {
     public static void channelWrite(String dest, File[] files, int capacity) {
         capacity = capacity <= 0 ? 1024 : capacity;
         FileChannel outChannel = null;
+        FileChannel inChannel = null;
+        FileOutputStream os = null;
+        FileInputStream is = null;
         try {
-            outChannel = new FileOutputStream(dest).getChannel();
+            os = new FileOutputStream(dest);
+            outChannel = os.getChannel();
             for (File file : files) {
-                FileChannel fc = new FileInputStream(file).getChannel();
+                is = new FileInputStream(file);
+                inChannel = is.getChannel();
                 ByteBuffer bb = ByteBuffer.allocate(capacity);
-                while (fc.read(bb) != -1) {
+                while (inChannel.read(bb) != -1) {
                     bb.flip();
                     outChannel.write(bb);
                     bb.clear();
                 }
-                fc.close();
+                inChannel.close();
+                is.close();
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } finally {
-            if (outChannel != null) {
-                try {
+            try {
+                if (outChannel != null) {
                     outChannel.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+                if (inChannel != null) {
+                    inChannel.close();
+                }
+                if (os != null) {
+                    os.close();
+                }
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -77,23 +93,40 @@ public class FileMergeUtil {
      */
     public static void channelTransfer(String dest, File[] files) {
         FileChannel outChannel = null;
+        FileChannel inChannel = null;
+        FileOutputStream os = null;
+        FileInputStream is = null;
         try {
-            outChannel = new FileOutputStream(dest).getChannel();
+            os = new FileOutputStream(dest);
+            outChannel = os.getChannel();
             for (File file : files) {
-                FileChannel inChannel = new FileInputStream(file).getChannel();
+                is = new FileInputStream(file);
+                inChannel = is.getChannel();
                 outChannel.transferFrom(inChannel, outChannel.size(), inChannel.size());
+
                 inChannel.close();
+                is.close();
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } finally {
-            if (outChannel != null) {
-                try {
+            try {
+                if (outChannel != null) {
                     outChannel.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+                if (inChannel != null) {
+                    inChannel.close();
+                }
+                if (os != null) {
+                    os.close();
+                }
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
         }
     }
 
@@ -134,7 +167,7 @@ public class FileMergeUtil {
      * @param files
      * @param buffer
      */
-    public static void randomAccessFile(String dest, File[] files, int buffer){
+    public static void randomAccessFile(String dest, List<File> files, int buffer){
         RandomAccessFile in = null;
         try {
             in = new RandomAccessFile(dest, "rw");
