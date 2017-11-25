@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.vergilyn.demo.springboot.http.bean.BlockFileBean;
+import com.vergilyn.demo.springboot.http.thread.BlockDownloadThread;
 import com.vergilyn.demo.springboot.http.util.ConstantUtils;
 
 import org.apache.commons.lang3.StringUtils;

@@ -43,12 +43,13 @@ public class HttpDownloadApplication implements CommandLineRunner{
         // 32.6mb = 33,441kb
         String music = "https://d1.music.126.net/dmusic/cloudmusicsetup_2_2_2_195462.exe";
 
+
         this.task.createTask(music);
         this.downloadScheduler.execDownloadTask();
 
         // FIXME 因为是多线程下载, 这里测试自己调整时间
         Thread.sleep(20 * 1000);
 
-        mergeScheduler.mergeBlock();
+        // mergeScheduler.mergeBlock();
     }
 }
