@@ -20,9 +20,9 @@ import org.springframework.http.HttpHeaders;
  */
 public class BlockDownloadThread implements Runnable {
 
-    private BlockFileBean block;
+    private final BlockFileBean block;
     // 临时目录
-    private String tempPath;
+    private final String tempPath;
 
     /**
      * @param block 下载任务信息
@@ -59,8 +59,8 @@ public class BlockDownloadThread implements Runnable {
                 /* 思路:
                  *  假设下载速度上限是m(kb/s), 发送n个字节的理论耗时: n / 1024 / m; 然而实际耗时 t(s), 那么则需要休眠 n / 1024 / m - t;
                  */
-                // 需要注意: System.currentTimeMillis(), 详见其API说明.
-                SpeedLimit sl = new SpeedLimit(totalSize, ConstantUtils.DOWNLOAD_SPEED, System.currentTimeMillis());
+                // 需要注意: System.currentTimeMillis(), 可能多次得到的时间相同, 详见其API说明.
+                SpeedLimit sl = new SpeedLimit(ConstantUtils.DOWNLOAD_SPEED, System.currentTimeMillis());
 
                 while((len = is.read(buffer)) != -1) {
                     os.write(buffer, 0, len);

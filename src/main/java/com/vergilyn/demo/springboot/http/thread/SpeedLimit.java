@@ -6,7 +6,6 @@ package com.vergilyn.demo.springboot.http.thread;
  * @date 2017/11/26
  */
 public class SpeedLimit {
-    private final Long totalSize;
     private final Long speed;
     // 已下载大小
     private Long writeSize = 0L;
@@ -14,8 +13,7 @@ public class SpeedLimit {
     private long endTime;
 
 
-    public SpeedLimit(Long totalSize, Long speed, long beginTime) {
-        this.totalSize = totalSize;
+    public SpeedLimit(Long speed, long beginTime) {
         this.speed = speed;
         this.beginTime = beginTime;
         this.endTime = beginTime;
@@ -27,10 +25,6 @@ public class SpeedLimit {
 
     public void updateEndTime(long endTime) {
         this.endTime = endTime;
-    }
-
-    public Long getTotalSize() {
-        return totalSize;
     }
 
     public Long getSpeed() {

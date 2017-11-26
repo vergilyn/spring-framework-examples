@@ -39,7 +39,7 @@ public class FileMergeUtil {
      * @param dest 最终文件保存完整路径
      * @param files 注意排序
      * @param capacity {@link ByteBuffer#allocate(int)}
-     * @see <a href="http://blog.csdn.net/skiof007/article/details/51072885">http://blog.csdn.net/skiof007/article/details/51072885<a/>
+     * @see <a href="http://blog.csdn.net/skiof007/article/details/51072885">如何使用java合并多个文件<a/>
      * @see <a href="http://blog.csdn.net/seebetpro/article/details/49184305">ByteBuffer.allocate()与ByteBuffer.allocateDirect()方法的区别<a/>
      */
     public static void channelWrite(String dest, File[] files, int capacity) {
