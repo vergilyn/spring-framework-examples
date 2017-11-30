@@ -122,6 +122,13 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.3</version>
 		</dependency>
+
+		<!-- 七牛：http://developer.qiniu.com/code/v7/sdk/java.html，版本[7.0.0, 7.0.99] -->
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>7.2.8</version>
+		</dependency>
 	</dependencies>
 
 	<build>
