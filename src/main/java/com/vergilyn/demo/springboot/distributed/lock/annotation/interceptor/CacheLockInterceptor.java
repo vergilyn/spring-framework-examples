@@ -10,6 +10,9 @@ import com.vergilyn.demo.springboot.distributed.lock.annotation.LockedObject;
 import com.vergilyn.demo.springboot.distributed.lock.redis.RedisLock;
 import com.vergilyn.demo.springboot.distributed.lock.redis.exception.CacheLockException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
 /**
  * @author VergiLyn
  * @blog http://www.cnblogs.com/VergiLyn/
@@ -18,6 +21,8 @@ import com.vergilyn.demo.springboot.distributed.lock.redis.exception.CacheLockEx
 public class CacheLockInterceptor implements InvocationHandler {
     public static int ERROR_COUNT = 0;
     private Object proxied;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     public CacheLockInterceptor(Object proxied) {
         this.proxied = proxied;
@@ -38,19 +43,19 @@ public class CacheLockInterceptor implements InvocationHandler {
         Object lockedObject = getLockedObject(annotations, args);
         String objectValue = lockedObject.toString();
         //新建一个锁
-        RedisLock lock = new RedisLock(cacheLock.lockedPrefix(), objectValue);
+        RedisLock lock = new RedisLock(cacheLock.lockedPrefix(), objectValue, redisTemplate);
         //加锁
         boolean result = lock.lock(cacheLock.timeOut(), cacheLock.expireTime(), cacheLock.expireUnit());
         if (!result) {//取锁失败
             ERROR_COUNT += 1;
-            throw new CacheLockException("get lock fail");
+            throw new CacheLockException("get lock failure!");
 
         }
         try {
-            //加锁成功，执行方法
+            // 获取锁成功，执行方法
             return method.invoke(proxied, args);
         } finally {
-            lock.unlock();//释放锁
+            lock.unlock(); // 释放锁
         }
 
     }
