@@ -1,13 +1,19 @@
-package com.vergilyn.springboot.demo.distributed.lock;
+package com.vergilyn.demo.springboot.distributed.lock.service;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.vergilyn.demo.springboot.distributed.lock.annotation.CacheLock;
+import com.vergilyn.demo.springboot.distributed.lock.annotation.LockedObject;
+
+import org.springframework.stereotype.Service;
 
 /**
  * @author VergiLyn
  * @blog http://www.cnblogs.com/VergiLyn/
  * @date 2017/11/30
  */
+@Service
 public class LockServiceImpl implements LockService {
     public static Map<Long, Long> inventory ;
     static{
@@ -17,7 +23,8 @@ public class LockServiceImpl implements LockService {
     }
 
     @Override
-    public void lockMethod(String arg1, Long arg2) {
+    @CacheLock(lockedPrefix="TEST_PREFIX")
+    public void lockMethod(String arg1, @LockedObject Long arg2) {
         //最简单的秒杀，这里仅作为demo示例
         System.out.println("lockMethod: " + reduceInventory(arg2));
 

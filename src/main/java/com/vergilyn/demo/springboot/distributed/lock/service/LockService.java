@@ -1,4 +1,4 @@
-package com.vergilyn.springboot.demo.distributed.lock;
+package com.vergilyn.demo.springboot.distributed.lock.service;
 
 import com.vergilyn.demo.springboot.distributed.lock.annotation.CacheLock;
 import com.vergilyn.demo.springboot.distributed.lock.annotation.LockedObject;

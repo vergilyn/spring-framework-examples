@@ -94,6 +94,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-redis</artifactId>
+			<version>1.4.7.RELEASE</version>
 		</dependency>
 		<!-- <dependency>
 			<groupId>com.oracle</groupId>
@@ -129,7 +130,12 @@
 			<artifactId>qiniu-java-sdk</artifactId>
 			<version>7.2.8</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
