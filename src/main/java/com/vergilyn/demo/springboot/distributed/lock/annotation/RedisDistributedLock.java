@@ -11,9 +11,24 @@ import java.lang.annotation.Target;
  * @blog http://www.cnblogs.com/VergiLyn/
  * @date 2017/11/30
  */
-@Target(ElementType.PARAMETER)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface LockedObject {
+public @interface RedisDistributedLock {
+
+    /**
+     * 锁key的前缀
+     */
+    String lockedPrefix() default "";
+
+    /**
+     * 轮询锁的时间超时时常, 单位: ms
+     */
+    long timeout() default 2000;
+
+    /**
+     * redis-key失效时常, 单位: ms
+     */
+    int expireTime() default 1000;
 
 }

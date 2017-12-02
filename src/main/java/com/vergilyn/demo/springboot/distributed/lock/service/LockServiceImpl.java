@@ -3,8 +3,8 @@ package com.vergilyn.demo.springboot.distributed.lock.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.vergilyn.demo.springboot.distributed.lock.annotation.CacheLock;
-import com.vergilyn.demo.springboot.distributed.lock.annotation.LockedObject;
+import com.vergilyn.demo.springboot.distributed.lock.annotation.RedisDistributedLock;
+import com.vergilyn.demo.springboot.distributed.lock.annotation.RedisLockedKey;
 
 import org.springframework.stereotype.Service;
 
@@ -15,23 +15,24 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class LockServiceImpl implements LockService {
-    public static Map<Long, Long> inventory ;
+    public static Map<Long, Integer> goods;
     static{
-        inventory = new HashMap<>();
-        inventory.put(10000001L, 10000L);
-        inventory.put(10000002L, 10000L);
+        goods = new HashMap<>();
+        goods.put(1L, 100);
+        goods.put(2L, 200);
     }
 
     @Override
-    @CacheLock(lockedPrefix="TEST_PREFIX")
-    public void lockMethod(String arg1, @LockedObject Long arg2) {
+    @RedisDistributedLock(lockedPrefix="TEST_PREFIX")
+    public void lockMethod(String arg1, @RedisLockedKey Long arg2) {
         //最简单的秒杀，这里仅作为demo示例
-        System.out.println("lockMethod: " + reduceInventory(arg2));
+        System.out.println("lockMethod, goods: " + reduceInventory(arg2));
 
     }
-    //模拟秒杀操作，姑且认为一个秒杀就是将库存减一，实际情景要复杂的多
-    private Long reduceInventory(Long commodityId){
-        inventory.put(commodityId,inventory.get(commodityId) - 1);
-        return inventory.get(commodityId);
+
+    // 模拟秒杀操作，姑且认为一个秒杀就是将库存减一
+    private Integer reduceInventory(Long commodityId){
+        goods.put(commodityId, goods.get(commodityId) - 1);
+        return goods.get(commodityId);
     }
 }

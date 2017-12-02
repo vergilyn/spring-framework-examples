@@ -2,12 +2,14 @@ package com.vergilyn.demo.springboot.distributed.lock.annotation.interceptor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
-import com.vergilyn.demo.springboot.distributed.lock.annotation.CacheLock;
-import com.vergilyn.demo.springboot.distributed.lock.annotation.LockedComplexObject;
-import com.vergilyn.demo.springboot.distributed.lock.annotation.LockedObject;
+import com.vergilyn.demo.springboot.distributed.lock.annotation.RedisDistributedLock;
+import com.vergilyn.demo.springboot.distributed.lock.annotation.RedisLockedKey;
 import com.vergilyn.demo.springboot.distributed.lock.redis.RedisLock;
+import com.vergilyn.demo.springboot.distributed.lock.redis.exception.RedisLockException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -22,25 +24,24 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Aspect
-public class CacheLockAOP {
+public class RedisDistributedLockAop {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
     /**
      * 定义缓存逻辑
      */
-    @Around("@annotation(com.vergilyn.demo.springboot.distributed.lock.annotation.CacheLock)")
+    @Around("@annotation(com.vergilyn.demo.springboot.distributed.lock.annotation.RedisDistributedLock)")
     public void cache(ProceedingJoinPoint pjp) {
         Method method = getMethod(pjp);
 
-        CacheLock cacheLock = method.getAnnotation(CacheLock.class);
+        RedisDistributedLock cacheLock = method.getAnnotation(RedisDistributedLock.class);
         String key = getRedisKey(method.getParameterAnnotations(), pjp.getArgs());
 
         RedisLock redisLock = new RedisLock(cacheLock.lockedPrefix(), key, redisTemplate);
-        System.out.println(Thread.currentThread().getName() + ": " + redisLock);
 
-        boolean isLock = redisLock.isLock(5);
-//        boolean isLock = redisLock.lock(5, 5, TimeUnit.SECONDS);
+        //       boolean isLock = redisLock.lockB(cacheLock.timeout(), cacheLock.expireTime());
+        boolean isLock = redisLock.lockA(cacheLock.timeout(), cacheLock.expireTime(), TimeUnit.MILLISECONDS);
         if (isLock) {
             try {
                 pjp.proceed();
@@ -48,7 +49,6 @@ public class CacheLockAOP {
             } catch (Throwable e) {
                 e.printStackTrace();
             } finally {
-                System.out.println(redisLock + ", unlock: " + redisLock.isLock());
                 redisLock.unlock();
             }
         }
@@ -81,39 +81,27 @@ public class CacheLockAOP {
 
     private String getRedisKey(Annotation[][] annotations, Object[] args){
         if (null == args || args.length == 0) {
-            throw new RuntimeException("方法参数为空，没有被锁定的对象");
+            throw new RedisLockException("方法参数为空，没有被锁定的对象");
         }
         if (null == annotations || annotations.length == 0) {
-            throw new RuntimeException("没有被注解的参数");
+            throw new RedisLockException("没有被注解的参数");
         }
-        //不支持多个参数加锁，只支持第一个注解为lockedObject或者lockedComplexObject的参数
-        int index = -1;//标记参数的位置指针
+        // 不支持多个参数加锁，只支持第一个注解为RedisLockedKey的参数
         for (int i = 0; i < annotations.length; i++) {
             for (int j = 0; j < annotations[i].length; j++) {
-                if (annotations[i][j] instanceof LockedComplexObject) {//注解为LockedComplexObject
-                    index = i;
+                if (annotations[i][j] instanceof RedisLockedKey) { //注解为LockedComplexObject
+                    RedisLockedKey redisLockedKey = (RedisLockedKey) annotations[i][j];
+                    String field = redisLockedKey.field();
                     try {
-                        return args[i].getClass().getField(((LockedComplexObject) annotations[i][j]).field()).toString();
+                        return StringUtils.isBlank(field) ?
+                                    args[i].toString() : args[i].getClass().getField(redisLockedKey.field()).toString();
                     } catch (NoSuchFieldException | SecurityException e) {
-                        throw new RuntimeException("注解对象中没有该属性" + ((LockedComplexObject) annotations[i][j]).field());
+                        throw new RedisLockException("注解对象中不存在属性: " + redisLockedKey.field());
                     }
                 }
-
-                if (annotations[i][j] instanceof LockedObject) {
-                    index = i;
-                    break;
-                }
-            }
-            //找到第一个后直接break，不支持多参数加锁
-            if (index != -1) {
-                break;
             }
         }
 
-        if (index == -1) {
-            throw new RuntimeException("请指定被锁定参数");
-        }
-
-        return args[index].toString();
+        throw new RedisLockException("未找到注解对象!");
     }
 }

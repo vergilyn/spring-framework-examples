@@ -1,7 +1,8 @@
 package com.vergilyn.demo.springboot.distributed.lock.redis;
 
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import com.vergilyn.demo.springboot.distributed.lock.redis.exception.RedisLockException;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -13,7 +14,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @date 2017/11/30
  */
 public class RedisLock {
-    private static final Random RANDOM = new Random();
     private String key;
     private boolean lock = false;
 
@@ -41,7 +41,7 @@ public class RedisLock {
      * @param expire  设置锁超时时间
      * @return true, 获取锁成功; false, 获取锁失败.
      */
-    public boolean lock(long timeout, long expire, final TimeUnit unit) {
+    public boolean lockA(long timeout, long expire, final TimeUnit unit) {
         // 相比isLock(), 此策略中的time只是用于得到超时, 所以不需要用getRedisTime();
         long beginTime = System.nanoTime();  // 用nanos、mills具体看需求.
         timeout = TimeUnit.SECONDS.toNanos(timeout);
@@ -57,10 +57,12 @@ public class RedisLock {
 
                 // 短暂休眠后轮询，避免可能的活锁
                 System.out.println("get lock waiting...");
-                Thread.sleep(30, RANDOM.nextInt(30));
+                Thread.sleep(30);
             }
         } catch (Exception e) {
-            throw new RuntimeException("locking error", e);
+            throw new RedisLockException("locking error", e);
+        } finally {
+            closeConnection();
         }
         return false;
     }
@@ -69,37 +71,35 @@ public class RedisLock {
      * 特别注意: 如果多服务器之间存在时间差, 并不建议用System.nanoTime()、System.currentTimeMillis().
      * 更好的是统一用redis-server的时间, 但只能获取到milliseconds.
      * 锁的策略参考: <a href="http://www.jeffkit.info/2011/07/1000/?spm=5176.100239.blogcont60663.7.9f4d4a8h4IOxe">用Redis实现分布式锁</a>
-     * FIXME: 有bug, 多线程有的执行不完
      *
-     * @param timeout 锁失效时常
+     * @param timeout 获取锁超时, 单位: 毫秒
+     * @param expire 锁失效时常, 单位: 毫秒
      * @return true, 获取锁成功; false, 获取锁失败.
      */
-    public boolean isLock(long timeout) {
-        // 更好的是用redis.TIME, 防止多服务器之间时间误差, 但只能返回milliseconds
+    public boolean lockB(long timeout, long expire) {
+        long bt = System.currentTimeMillis();
         long lockVal;
-        String expireVal;
+        String lockExpireTime;
         try {
-            while (!this.lock) {  // FIXME: 会一直等到获取锁, 感觉可以引入获取锁超时机制, 如lock()的逻辑
-                System.out.println(this + ": 1 " + this.redisClient);
+            while (!this.lock) {
+                if(System.currentTimeMillis() - bt > timeout){
+                    throw new RedisLockException("get lock timeout!");
+                }
+
                 // 锁的键值: {当前时间} + {失效时常} = {锁失效时间}
-                lockVal = getRedisTime() + TimeUnit.SECONDS.toMillis(timeout) + 1;
-                System.out.println(this + ": 2 : " + lockVal);
+                lockVal = getRedisTime() + expire;
 
                 // 1. 尝试获取锁
                 boolean ifAbsent = this.redisClient.opsForValue().setIfAbsent(this.key, lockVal + "");
-                System.out.println(this + ": 3 : " + ifAbsent + " : " + lockVal);
-
                 if (ifAbsent) { // 设置成功, 表示获得锁
                     // 这种策略下, 是否设置key失效不太重要. 因为, 正常流程中最后会释放锁(del-key); 如果是异常情况下未释放锁, 后面的代码也会判断锁是否失效.
                     // 设置的好处: 能减少redis的内存消耗, 及时清理无效的key(暂时只想到这)
                     // this.redisClient.expire(key, timeout, TimeUnit.SECONDS);
-                    System.out.println(this + ": ifAbsent : " + lockVal);
-
                     this.lock = true;
                     return true;
                 }
 
-                expireVal = this.redisClient.opsForValue().get(this.key);
+                lockExpireTime = this.redisClient.opsForValue().get(this.key);
                 long curTime = getRedisTime();
                 // curTime > expireVal: 表示此锁已无效
                 /* 在锁无效的前提下, 尝试获取锁: (一定要用)getAndSet()
@@ -110,11 +110,10 @@ public class RedisLock {
                  * 但因为C1、C2是同时执行到此, 所以time-01、time-02的值近视相等.
                  * (若多服务器存在时间差, 那这个差值有问题, 所以服务器时间如果不同步则不能用System.nanoTime()、System.currentTimeMillis(), 该用redis-server time.)
                  */
-                System.out.println(this + ": expireVal : " + expireVal);
-                if (curTime > NumberUtils.toLong(expireVal, 0)) {
-                    // getSet必须在{curTime > expireVal} 判断之后; 否则, 可能出现死循环
-                    String ss = this.redisClient.opsForValue().getAndSet(this.key, lockVal + "");
-                    if (curTime > NumberUtils.toLong(ss, 0)) {
+                if (curTime > NumberUtils.toLong(lockExpireTime, 0)) {
+                    // getset必须在{curTime > expireVal} 判断之后; 否则, 可能出现死循环
+                    lockExpireTime = this.redisClient.opsForValue().getAndSet(this.key, lockVal + "");
+                    if (curTime > NumberUtils.toLong(lockExpireTime, 0)) {
                         // this.redisClient.expire(key, timeout, TimeUnit.SECONDS); // 是否设置失效不重要, 理由同上.
                         System.out.println(this + ": getAndSet");
                         this.lock = true;
@@ -124,11 +123,13 @@ public class RedisLock {
 
                 // 锁被占用, 短暂休眠等待轮询
                 System.out.println(this + ": get lock waiting...");
-                Thread.sleep(400, RANDOM.nextInt(30));
+                Thread.sleep(40);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("locking error", e);
+            throw new RedisLockException("locking error", e);
+        } finally {
+            closeConnection();
         }
         System.out.println(this + ": get lock error.");
         return false;
@@ -139,9 +140,15 @@ public class RedisLock {
      */
     private long getRedisTime() {
 //        return this.redisConnection.time();
-        return this.redisClient.getConnectionFactory().getConnection().time();
+        return this.redisConnection.time();
 //      return System.nanoTime();
 //      return  System.currentTimeMillis();
+    }
+
+    private void closeConnection(){
+        if(!this.redisConnection.isClosed()){
+            this.redisConnection.close();
+        }
     }
 
     /**
