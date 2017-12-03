@@ -7,4 +7,6 @@ package com.vergilyn.demo.springboot.distributed.lock.service;
  */
 public interface LockService {
     public void lockMethod(String arg1,Long arg2);
+
+    public void lockMethod(LockBean lockBean);
 }

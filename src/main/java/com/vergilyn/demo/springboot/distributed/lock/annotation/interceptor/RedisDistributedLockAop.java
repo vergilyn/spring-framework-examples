@@ -56,14 +56,9 @@ public class RedisDistributedLockAop {
     }
 
     /**
-     * 获取被拦截方法对象
-     * <p>
-     * MethodSignature.getMethod() 获取的是顶层接口或者父类的方法对象
-     * 而缓存的注解在实现类的方法上
-     * 所以应该使用反射获取当前对象的方法对象
+     * 获取被拦截的方法对象
      */
     private Method getMethod(ProceedingJoinPoint pjp) {
-        //获取参数的类型
         Object[] args = pjp.getArgs();
         Class[] argTypes = new Class[pjp.getArgs().length];
         for (int i = 0; i < args.length; i++) {
@@ -86,16 +81,21 @@ public class RedisDistributedLockAop {
         if (null == annotations || annotations.length == 0) {
             throw new RedisLockException("没有被注解的参数");
         }
-        // 不支持多个参数加锁，只支持第一个注解为RedisLockedKey的参数
+        // 只支持第一个注解为RedisLockedKey的参数
         for (int i = 0; i < annotations.length; i++) {
             for (int j = 0; j < annotations[i].length; j++) {
                 if (annotations[i][j] instanceof RedisLockedKey) { //注解为LockedComplexObject
                     RedisLockedKey redisLockedKey = (RedisLockedKey) annotations[i][j];
                     String field = redisLockedKey.field();
                     try {
-                        return StringUtils.isBlank(field) ?
-                                    args[i].toString() : args[i].getClass().getField(redisLockedKey.field()).toString();
+                        // field存在, 表示取参数对象的相应field;
+                        if(StringUtils.isBlank(field)){
+                            return args[i].toString();
+                        }else {
+                            return args[i].getClass().getDeclaredField(redisLockedKey.field()).toString();
+                        }
                     } catch (NoSuchFieldException | SecurityException e) {
+                        e.printStackTrace();
                         throw new RedisLockException("注解对象中不存在属性: " + redisLockedKey.field());
                     }
                 }

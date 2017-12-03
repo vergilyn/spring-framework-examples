@@ -30,6 +30,13 @@ public class LockServiceImpl implements LockService {
 
     }
 
+    @Override
+    @RedisDistributedLock(lockedPrefix="TEST_PREFIX")
+    public void lockMethod(@RedisLockedKey(field = "idic")LockBean lockBean) {
+        System.out.println("lockMethod bean, goods: " + reduceInventory(lockBean.getIdic()));
+
+    }
+
     // 模拟秒杀操作，姑且认为一个秒杀就是将库存减一
     private Integer reduceInventory(Long commodityId){
         goods.put(commodityId, goods.get(commodityId) - 1);

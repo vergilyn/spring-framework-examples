@@ -57,12 +57,13 @@ public class DistributedLockApplication implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
         System.out.println("run....");
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 2; i++) {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
+//                                      lockService.lockMethod(new LockBean(1L));
                    lockService.lockMethod("arg1", 1L);
-//                     System.out.println(redisTemplate.getConnectionFactory().getConnection());
+//                     System.out.println(redisTemplate.opsForValue().setIfAbsent("kky","1"));
                 }
             });
         }

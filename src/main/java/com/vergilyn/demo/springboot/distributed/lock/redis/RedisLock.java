@@ -18,7 +18,6 @@ public class RedisLock {
     private boolean lock = false;
 
     private final StringRedisTemplate redisClient;
-    private final RedisConnection redisConnection;
 
     /**
      * @param purpose 锁前缀
@@ -28,9 +27,8 @@ public class RedisLock {
         if (redisClient == null) {
             throw new IllegalArgumentException("redisClient 不能为null!");
         }
-        this.key = purpose + "_" + key + "_lock";
+        this.key = purpose + "_" + key + "_redis_lock";
         this.redisClient = redisClient;
-        this.redisConnection = redisClient.getConnectionFactory().getConnection();
     }
 
     /**
@@ -44,7 +42,7 @@ public class RedisLock {
     public boolean lockA(long timeout, long expire, final TimeUnit unit) {
         // 相比isLock(), 此策略中的time只是用于得到超时, 所以不需要用getRedisTime();
         long beginTime = System.nanoTime();  // 用nanos、mills具体看需求.
-        timeout = TimeUnit.SECONDS.toNanos(timeout);
+        timeout = unit.toNanos(timeout);
         try {
             // 在timeout的时间范围内不断轮询锁
             while (System.nanoTime() - beginTime < timeout) {
@@ -61,8 +59,6 @@ public class RedisLock {
             }
         } catch (Exception e) {
             throw new RedisLockException("locking error", e);
-        } finally {
-            closeConnection();
         }
         return false;
     }
@@ -100,7 +96,9 @@ public class RedisLock {
                 }
 
                 lockExpireTime = this.redisClient.opsForValue().get(this.key);
+
                 long curTime = getRedisTime();
+
                 // curTime > expireVal: 表示此锁已无效
                 /* 在锁无效的前提下, 尝试获取锁: (一定要用)getAndSet()
                  *
@@ -113,9 +111,9 @@ public class RedisLock {
                 if (curTime > NumberUtils.toLong(lockExpireTime, 0)) {
                     // getset必须在{curTime > expireVal} 判断之后; 否则, 可能出现死循环
                     lockExpireTime = this.redisClient.opsForValue().getAndSet(this.key, lockVal + "");
+
                     if (curTime > NumberUtils.toLong(lockExpireTime, 0)) {
                         // this.redisClient.expire(key, timeout, TimeUnit.SECONDS); // 是否设置失效不重要, 理由同上.
-                        System.out.println(this + ": getAndSet");
                         this.lock = true;
                         return true;
                     }
@@ -128,8 +126,6 @@ public class RedisLock {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RedisLockException("locking error", e);
-        } finally {
-            closeConnection();
         }
         System.out.println(this + ": get lock error.");
         return false;
@@ -139,15 +135,15 @@ public class RedisLock {
      * @return current redis-server time in milliseconds.
      */
     private long getRedisTime() {
-//        return this.redisConnection.time();
-        return this.redisConnection.time();
-//      return System.nanoTime();
-//      return  System.currentTimeMillis();
-    }
-
-    private void closeConnection(){
-        if(!this.redisConnection.isClosed()){
-            this.redisConnection.close();
+        RedisConnection connection = null;
+        try {
+            connection = this.redisClient.getConnectionFactory().getConnection();
+            long time = connection.time();
+            return time;
+        } finally {
+           if(connection != null){
+               connection.close();
+           }
         }
     }
 
