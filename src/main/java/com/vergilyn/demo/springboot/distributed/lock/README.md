@@ -1,6 +1,10 @@
 # 基于redis实现分布式并发锁
 博客地址: http://www.cnblogs.com/VergiLyn/p/7968094.html  
 
+## redis官方实现版本
+[Redis分布式锁](http://www.redis.cn/topics/distlock.html)、[Distributed locks with Redis](https://redis.io/topics/distlock]) 
+java版本的名字叫redisson, 其github: https://github.com/redisson/redisson
+
 ## 代码存在问题
 1. 消耗redis的连接过多, 频繁的getConnection()、closeConnection();
 2. 创建的RedisLock对象太多.
