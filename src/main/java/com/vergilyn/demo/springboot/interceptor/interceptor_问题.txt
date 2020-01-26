@@ -1,9 +1,0 @@
-1、 (个人觉得) 拦截器能实现filter的功能，反之则不一定。那么适用性怎么抉择,或者说interceptor、filter实质的使用/应用区别是什么?
-
-2、 interceptor怎么在preHandle(...)中修改传到controller的参数值?
-
-3、 preHandle(...)拦截调后怎么处理转发/重定向?感觉demo的写法不好。比如检测未登陆，转发/重定向到登陆页面。
-
-3、 interceptor怎么在postHandle中得到controller返回的自定义对象结果?（比如Map、List等，被@ResponseBody注解）
-
-4、 interceptor的注入方式，不喜欢demo中的InterceptorConfiguration注入方式，是否还有别的bean注入? 如filter的@WebFilter。

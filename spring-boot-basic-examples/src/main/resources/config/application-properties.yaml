@@ -1,0 +1,29 @@
+vergilyn:
+  base:
+    byte_: 1
+    short_: 2
+    int_: 3
+    long_: 1234
+    float_: 123.456
+    double_: 12345.6789
+    char_: 2
+    boolean_: true
+    string_: str中文  # 中文乱码问题，不同的IDE问题处理不一样。
+    date_: 2017-02-13 # TODO 日期不知如何直接注入成Date类型
+
+  complex:
+    map:
+      name: vergilyn
+      blog: http://www.cnblogs.com/VergiLyn/
+      remark: 备注,中文23333
+    list:
+      - list-01
+      - list-02
+      - list-03
+      - list-04
+    array:
+      - array-01
+      - array-02
+      - array-03
+      - array-04
+

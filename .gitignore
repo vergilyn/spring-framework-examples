@@ -39,17 +39,30 @@ $RECYCLE.BIN/
 .Trashes
 .VolumeIcon.icns
 
+## Ignore svn files
+.svn
+
+## ignore any target dir
+target
+
+##ignore only top level data dir - local node data files for unit tests
+/data
+
+## Ignore project files created by Eclipse
+.settings
+.project
+.classpath
+
+
 # Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
 Temporary Items
 .apdisk
-/target
-/.settings
 /classes
 .class
-/.idea
-.project
-.classpath
-.iml
+.idea
+*.iml
+/out/
+/target/
