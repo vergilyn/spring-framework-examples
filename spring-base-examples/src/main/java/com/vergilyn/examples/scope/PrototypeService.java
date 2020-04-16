@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
  * @date 2020-01-26
  */
 @Service
-@Scope("singleton")
-public class SingletonService {
+@Scope("prototype")
+public class PrototypeService {
     private int number = 0;
 
     public int getNumber() {
@@ -20,6 +20,5 @@ public class SingletonService {
     public int incrNumber() {
         return ++number;
     }
+
 }
-
-

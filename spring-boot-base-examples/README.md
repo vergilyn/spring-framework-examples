@@ -1,5 +1,23 @@
 # spring-boot-basic-examples
 
+## 说明
+1. 此项目中是通过spring boot的profile来划分不同功能的application.properties配置。
+2. 如果运行有问题，可能是引入了多余的jar，且自动配置失效，又没指定自定义的手动配置。比如，spring-boot-starter-jdbc。
+
+参考文档：  
+- 《spring-boot-中文参考指南.pdf》
++ [《Spring Boot Reference Guide》](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+
+参考github demo：  
++ [spring boot official](https://github.com/spring-projects/spring-boot.git) <br>
++ [spring boot samples](https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples) <br>
++ [spring boot mybatis](https://github.com/mybatis/spring-boot-starter.git) <br>
+
+2020-01-26:  
+  重新整理，spring-boot升级到`2.2.2.RELEASE`，可能导致部分无法运行（特别是牵涉database相关代码）
+  
+  
+## examples
 - aop
 - banner
 - cacheable: spring-cache，可以和redis、jcache、java-memory等结合
@@ -9,7 +27,6 @@
 - profiles
 - properties: 自定义配置文件`*.properties` 或 `*.yaml`。
 - **http:** 特殊的网络文件下载示例
-
 
 ## interceptor
 1. (个人觉得) 拦截器能实现filter的功能，反之则不一定。那么适用性怎么抉择，或者说interceptor、filter实质的使用/应用区别是什么?
