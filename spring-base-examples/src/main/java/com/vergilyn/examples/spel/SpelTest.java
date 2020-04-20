@@ -2,6 +2,7 @@ package com.vergilyn.examples.spel;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,8 +13,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SpelTest {
     @Autowired
-    private BaseProperty baseProperty;
-    @Autowired
     private SpelBasisProperty spelBasisProperty;
     @Autowired
     private SpelProperty spelProperty;
@@ -21,9 +20,15 @@ public class SpelTest {
     private RandomProperty randomProperty;
 
     public void test(){
-        System.out.printf("base >>>> %s \r\n\r\n", baseProperty);
         System.out.printf("SpelBasisProperty >>>>  %s \r\n\r\n", spelBasisProperty);
         System.out.printf("SpelProperty >>>>  %s \r\n\r\n", spelProperty);
         System.out.printf("RandomProperty >>>>  %s \r\n\r\n", randomProperty);
+    }
+
+    public static void main(String[] args) {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(RandomProperty.class);
+
+        RandomProperty bean = context.getBean(RandomProperty.class);
+        System.out.println(bean);
     }
 }

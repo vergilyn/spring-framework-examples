@@ -1,0 +1,14 @@
+# https://docs.spring.io/spring/docs/5.2.5.RELEASE/spring-framework-reference/core.html#expressions-properties-arrays
+
+vergilyn:
+  spel:
+    collections:
+      arrays:
+        - A
+        - B
+      list:
+        - a
+        - b
+      map:
+        key-01: value-01
+        key-02: value-02

@@ -2,7 +2,6 @@ package com.vergilyn.examples;
 
 import com.vergilyn.examples.annotation.Log;
 import com.vergilyn.examples.scope.ScopeTest;
-import com.vergilyn.examples.spel.SpelTest;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ public class SpringBasicApplication implements CommandLineRunner {
     @Log
     private Logger logger;
     @Autowired
-    private SpelTest spelTest;
-    @Autowired
     private ScopeTest scopeTest;
 
     public static void main(String[] args) {
@@ -34,8 +31,6 @@ public class SpringBasicApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         logger.info("custom Logger annotation >>>> print");
-
-        spelTest.test();
 
         scopeTest.test();
     }
