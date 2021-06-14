@@ -5,12 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.vergilyn.examples</groupId>
+        <groupId>com.vergilyn.examples.springframework</groupId>
         <artifactId>spring-framework-examples</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>spring-feature-examples</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
