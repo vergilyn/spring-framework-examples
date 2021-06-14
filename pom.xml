@@ -43,7 +43,7 @@
         <apache-common-pool2.version>2.6.1</apache-common-pool2.version>
 
         <apache-common-fileupload.version>1.4</apache-common-fileupload.version>
-        <apache-common-httpclient.version>4.5.10</apache-common-httpclient.version>
+        <apache-common-httpclient.version>4.5.13</apache-common-httpclient.version>
         <apache-common-collections4.version>4.4</apache-common-collections4.version>
 
         <!-- unit-test -->
