@@ -14,6 +14,8 @@
         <module>spring-boot-base-examples</module>
         <module>spring-spel-examples</module>
         <module>spring-feature-examples</module>
+        <module>spring-boot-feature-examples</module>
+        <module>spring-cache-examples</module>
     </modules>
 
     <properties>

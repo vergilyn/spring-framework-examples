@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	logback-test.xml schema,
+	logback-spring.xml schema,
 		https://github.com/enricopulatzo/logback-XSD
 		https://github.com/nkatsar/logback-XSD
 -->

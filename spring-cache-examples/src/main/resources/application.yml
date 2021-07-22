@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: spring-cache-examples
+#  main:
+#    banner-mode: off
+  output:
+    ansi:
+      enabled: always
+  profiles:
+    active:
+      - redis
+      - cache

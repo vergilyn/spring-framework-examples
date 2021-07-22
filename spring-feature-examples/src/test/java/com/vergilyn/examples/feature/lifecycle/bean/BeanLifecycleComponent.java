@@ -1,4 +1,4 @@
-package com.vergilyn.examples.feature;
+package com.vergilyn.examples.feature.lifecycle.bean;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
