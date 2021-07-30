@@ -12,13 +12,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public abstract class AbstractSpringFeatureTests {
 
-    protected AnnotationConfigApplicationContext annotationConfigApplicationContext(){
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        return context;
+    protected AnnotationConfigApplicationContext initApplicationContext(){
+        return new AnnotationConfigApplicationContext();
     }
 
     protected <T> T registerAndGetBean(Class<T> clazz) {
-        AnnotationConfigApplicationContext context = annotationConfigApplicationContext();
+        AnnotationConfigApplicationContext context = initApplicationContext();
         context.refresh();
 
         T bean;

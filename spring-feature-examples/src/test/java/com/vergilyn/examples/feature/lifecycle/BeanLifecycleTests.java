@@ -16,7 +16,7 @@ public class BeanLifecycleTests extends AbstractSpringFeatureTests {
 
     @Test
     public void destroyBean() {
-        AnnotationConfigApplicationContext context = annotationConfigApplicationContext();
+        AnnotationConfigApplicationContext context = initApplicationContext();
         context.register(BeanLifecycleComponent.class, CustomBeanPostProcessor.class);
         context.refresh();
 
