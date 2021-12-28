@@ -204,6 +204,7 @@
                     <include>**/*.yml</include>
                     <include>**/*.yaml</include>
                     <include>**/*.json</include>
+                    <include>**/*.cfg</include>
                 </includes>
             </resource>
         </resources>
