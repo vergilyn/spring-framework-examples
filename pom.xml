@@ -16,6 +16,8 @@
         <module>spring-feature-examples</module>
         <module>spring-boot-feature-examples</module>
         <module>spring-cache-examples</module>
+        <module>spring-retry-examples</module>
+        <module>spring-boot-usage-examples</module>
     </modules>
 
     <properties>
@@ -25,7 +27,7 @@
 
         <revision>1.0.0-SNAPSHOT</revision>
 
-        <spring-boot-dependencies.version>2.2.11.RELEASE</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>2.2.13.RELEASE</spring-boot-dependencies.version>
         <projectlombok.version>1.18.10</projectlombok.version>
         <google-guava.version>30.0-jre</google-guava.version>
         <alibaba-fastjson.version>1.2.62</alibaba-fastjson.version>
@@ -199,7 +201,10 @@
     <build>
         <resources>
             <resource>
-                <directory>src/test/java</directory>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
                 <includes>
                     <include>**/*.yml</include>
                     <include>**/*.yaml</include>
@@ -208,6 +213,21 @@
                 </includes>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/test/java</directory>
+                <includes>
+                    <include>**/*.yml</include>
+                    <include>**/*.yaml</include>
+                    <include>**/*.json</include>
+                    <include>**/*.cfg</include>
+                </includes>
+            </testResource>
+        </testResources>
+
 
         <plugins>
             <plugin>

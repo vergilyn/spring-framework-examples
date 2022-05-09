@@ -1,10 +1,10 @@
 package com.vergilyn.examples.feature;
 
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author vergilyn
@@ -14,6 +14,14 @@ public abstract class AbstractSpringFeatureTests {
 
     protected AnnotationConfigApplicationContext initApplicationContext(){
         return new AnnotationConfigApplicationContext();
+    }
+
+    protected AnnotationConfigApplicationContext initApplicationContext(Class<?> clazz){
+        AnnotationConfigApplicationContext context = initApplicationContext();
+        context.scan(clazz.getPackage().getName());
+
+        context.refresh();
+        return context;
     }
 
     protected <T> T registerAndGetBean(Class<T> clazz) {
