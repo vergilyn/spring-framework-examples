@@ -4,7 +4,14 @@ import com.vergilyn.examples.springboot.usage.AbstractSpringbootUsageApplication
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class StrategyInitTests extends AbstractSpringbootUsageApplicationTest {
+/**
+ * 2022-06-08，代码结构可以参考，但是如果项目中需要大量策略模式，此代码结构没有通用性。
+ * 更优的参考：
+ *
+ * @author vergilyn
+ * @since 2022-06-08
+ */
+public class StrategyBasicTests extends AbstractSpringbootUsageApplicationTest {
 	@Autowired
 	protected FilterFactory filterFactory;
 

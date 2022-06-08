@@ -1,16 +1,15 @@
 package com.vergilyn.examples.feature.properties;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import com.vergilyn.examples.feature.AbstractSpringFeatureTests;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.bind.PropertySourcesPlaceholdersResolver;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * 利用spring 替换某个文件中的占位符，占位符满足 SpEL
@@ -39,6 +38,9 @@ public class PropertyResolverTests extends AbstractSpringFeatureTests {
 
 		final String o = resolver.resolvePlaceholders(propertiesTemplate);
 		System.out.println(o);
+
+		String s = environment.resolvePlaceholders(propertiesTemplate);
+		System.out.println(s);
 	}
 
 	@Test
