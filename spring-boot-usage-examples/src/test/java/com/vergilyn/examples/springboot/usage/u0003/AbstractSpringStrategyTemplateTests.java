@@ -10,7 +10,7 @@ public abstract class AbstractSpringStrategyTemplateTests extends AbstractSpring
 		System.out.printf("%s, size: %d\n", prefix, list == null ? 0 : list.size());
 
 		if (list == null || list.isEmpty()){
-			System.out.println("\t- NULL \n");
+			System.out.printf("\t- NULL \n");
 		}else {
 
 			for (Object o : list) {

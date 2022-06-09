@@ -66,3 +66,4 @@ Temporary Items
 *.iml
 /out/
 /target/
+.flattened-pom.xml

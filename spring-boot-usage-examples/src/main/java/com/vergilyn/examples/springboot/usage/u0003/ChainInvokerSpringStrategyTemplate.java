@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
  * @author vergilyn
  * @since 2022-06-08
  *
+ * @see org.springframework.web.client.RestTemplate#exchange(org.springframework.http.RequestEntity, Class)
+ * @see org.springframework.web.client.RestTemplate#exchange(org.springframework.http.RequestEntity, ParameterizedTypeReference)
  * @see org.springframework.data.redis.core.RedisTemplate
  * @see org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
  */

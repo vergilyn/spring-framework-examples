@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.http.RequestEntity;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.ParameterizedType;
@@ -23,6 +24,13 @@ import java.util.stream.Collectors;
 /**
  * 参考的是`RedisTemplate`的方式，相比 `{@link StrategyBasicTests} & {@link StrategyExtendsTests}`
  * 这种 组合的方式 更易在spring项目中通用。
+ *
+ * <p> <b>不友好：</b> SpringStrategyTemplate 提供的所有方法还需要多传 Class/ParameterizedTypeReference。
+ * <br/> <b>貌似java的泛型擦除后，只能这么写。参考：</b>
+ * <pre>
+ *   - {@link org.springframework.web.client.RestTemplate#exchange(RequestEntity, Class)}
+ *   - {@link org.springframework.web.client.RestTemplate#exchange(RequestEntity, ParameterizedTypeReference)}
+ * </pre>
  *
  * @author vergilyn
  * @since 2022-06-08
@@ -49,7 +57,7 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 	private List<Generic<BigIntegerExt>> _bigIntegerExtGenerics;
 
 	/**
-	 * 保持与 {@link GenericStrategyAutowiredTests#springAutowired()} 的注入结果一致。
+	 * 保持与 {@link GenericStrategyAutowiredTests#springAutowired()} 的注入一致。
 	 */
 	@Test
 	public void expected(){
