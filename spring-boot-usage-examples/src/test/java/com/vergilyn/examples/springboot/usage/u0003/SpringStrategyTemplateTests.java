@@ -13,6 +13,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.RequestEntity;
 import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -28,8 +29,24 @@ import java.util.stream.Collectors;
  * <p> <b>不友好：</b> SpringStrategyTemplate 提供的所有方法还需要多传 Class/ParameterizedTypeReference。
  * <br/> <b>貌似java的泛型擦除后，只能这么写。参考：</b>
  * <pre>
- *   - {@link org.springframework.web.client.RestTemplate#exchange(RequestEntity, Class)}
- *   - {@link org.springframework.web.client.RestTemplate#exchange(RequestEntity, ParameterizedTypeReference)}
+ *   - {@link RestTemplate#exchange(RequestEntity, Class)}
+ *   - {@link RestTemplate#exchange(RequestEntity, ParameterizedTypeReference)}
+ * </pre>
+ *
+ * <p>
+ * <h3>{@link SpringStrategyTemplate} VS {@link ChainInvokerSpringStrategyTemplate}</h3>
+ * <p> 1. {@link SpringStrategyTemplate} 参考 {@link RestTemplate}，不使用spring的泛型依赖注入。
+ * <pre>
+ * // 调用者在注入时相对更简单（不再需要指明泛型），例如
+ * {@code
+ *    @Autowired
+ *    private SpringStrategyTemplate strategyTemplate;
+ * }
+ *
+ * // 实际使用时，最后的`KeyFunction`根据接口抽象程度，也可以不用 显式(explicit)传递。
+ * {@code
+ *    strategyTemplate.lookupBeans(key, typeReference, generic -> generic.getStrategyKey())
+ * }
  * </pre>
  *
  * @author vergilyn
@@ -56,6 +73,25 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 	@Autowired
 	private List<Generic<BigIntegerExt>> _bigIntegerExtGenerics;
 
+	@Autowired
+	private SpringStrategyTemplate strategyTemplate;
+
+	@Test
+	public void compare(){
+		String key = StrategyKey.KEY_INTEGER;
+
+		print("List<Generic<?>> Origin-Spring-Generic-Autowired", _generics);
+
+		ParameterizedTypeReference<Generic<?>> typeReference = new ParameterizedTypeReference<Generic<?>>() {};
+
+		List<Generic<?>> generics = genericStrategy.lookupBeans(key, typeReference);
+		print("List<Generic<?>> Spring-Generic-Autowired", generics);
+
+		List<Generic<?>> notGenericAutowired = strategyTemplate.lookupBeans(key, typeReference, generic -> generic.getStrategyKey());
+		print("List<Generic<?>> Not-Spring-Generic-Autowired", notGenericAutowired);
+
+	}
+
 	/**
 	 * 保持与 {@link GenericStrategyAutowiredTests#springAutowired()} 的注入一致。
 	 */
@@ -63,9 +99,14 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 	public void expected(){
 		String key = StrategyKey.KEY_INTEGER;
 
+		// 保留 key 对应的 Generic.
+		List<Generic<?>> expectedGenerics = _generics.stream()
+				.filter(generic -> key.equals(generic.getStrategyKey()))
+				.collect(Collectors.toList());
+
 		List<Generic<?>> generics = genericStrategy.lookupBeans(key, new ParameterizedTypeReference<Generic<?>>() {});
 		print("List<Generic<?>>", generics);
-		Assertions.assertIterableEquals(generics, _generics);
+		Assertions.assertIterableEquals(generics, expectedGenerics);
 
 		List<Generic<Number>> numberGenerics = numberGenericStrategy.lookupBeans(key, new ParameterizedTypeReference<Generic<Number>>() {});
 		print("List<Generic<Number>>", numberGenerics);
