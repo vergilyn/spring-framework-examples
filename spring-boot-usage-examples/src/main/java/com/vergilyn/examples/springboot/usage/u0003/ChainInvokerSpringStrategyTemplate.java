@@ -6,10 +6,14 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.Ordered;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,29 +34,36 @@ public class ChainInvokerSpringStrategyTemplate<K, V extends SpringStrategy<K>>
 
 	private ApplicationContext applicationContext;
 
-	/**
-	 *
-	 * <pre>例如，实际使用时一般都是：
-	 *   {@code
-	 *      @Autowired
-	 *      private ChainInvokerSpringStrategyTemplate<String, Handler> handlerStrategy;
-	 *   }
-	 * </pre>
-	 *
-	 * 如果调用时<b>每个方法都需要传递`Handler.class`</b>，感觉代码太繁琐。
-	 *
-	 * <p> XXX 2022-06-08，是否有方法不传{@code clazz}，通过某种方式拿到 `Handler.class`。
-	 */
 	@Override
-	public List<V> all(K key, Class<V> clazz) {
-		List<V> beans = lookupBeans(key, clazz);
+	public List<V> lookupBeans(K key, Class<V> clazz) {
+		List<V> beans = lookupBeansCore(key, clazz);
 
 		return Optional.ofNullable(beans).orElse(Lists.newArrayList());
 	}
 
 	@Override
+	public List<V> lookupBeans(K key, ParameterizedTypeReference<V> typeReference) {
+		Type expectedType = typeReference.getType();
+		ResolvableType type = ResolvableType.forType(expectedType);
+
+		List<V> beans = Lists.newArrayList();
+		String[] candidateBeanNames = applicationContext.getBeanNamesForType(type);
+		if (candidateBeanNames == null || candidateBeanNames.length == 0){
+			return beans;
+		}
+
+		Class<V> requiredType = acquireRawClass(typeReference);
+		for (String candidateBeanName : candidateBeanNames) {
+			V bean = applicationContext.getBean(candidateBeanName, requiredType);
+			beans.add(bean);
+		}
+
+		return beans;
+	}
+
+	@Override
 	public V getHighestPriority(K key, Class<V> clazz) {
-		List<V> all = all(key, clazz);
+		List<V> all = lookupBeans(key, clazz);
 
 		if (all.isEmpty()){
 			return null;
@@ -63,7 +74,7 @@ public class ChainInvokerSpringStrategyTemplate<K, V extends SpringStrategy<K>>
 
 	@Override
 	public V getLowerPriority(K key, Class<V> clazz) {
-		List<V> all = all(key, clazz);
+		List<V> all = lookupBeans(key, clazz);
 
 		if (all.isEmpty()){
 			return null;
@@ -74,11 +85,28 @@ public class ChainInvokerSpringStrategyTemplate<K, V extends SpringStrategy<K>>
 
 	@Override
 	public void invoke(K key, Class<V> clazz, Consumer<V> invoker) {
-		for (V bean : all(key, clazz)) {
+		for (V bean : lookupBeans(key, clazz)) {
 			invoker.accept(bean);
 		}
 	}
 
+	/**
+	 * 例如
+	 * <pre>
+	 *     {@code new ParameterizedTypeReference<Generic<BigInteger>>() {}}
+	 * </pre>
+	 * 最后返回的`class = Generic.class`，之后如果再通过{@link ApplicationContext#getBeansOfType(Class)}
+	 * 会得到所有的`Generic-beans`，而不是 精确匹配的`BigIntegerGeneric`。
+	 *
+	 */
+	public Class<V> acquireRawClass(ParameterizedTypeReference<V> typeReference){
+		Type type = typeReference.getType();
+		if (type instanceof ParameterizedType){
+			return (Class<V>) ((ParameterizedType) type).getRawType();
+		}
+
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * <p> 1. TODO 2022-06-08，可以做一层 cache-map。
@@ -86,7 +114,7 @@ public class ChainInvokerSpringStrategyTemplate<K, V extends SpringStrategy<K>>
 	 * <p> 3. {@link ApplicationContext#getBeansOfType(Class)} 虽然是 {@link java.util.LinkedHashMap}，
 	 *   但是貌似不支持{@link Order}（支持 {@link Ordered}），所以用{@link AnnotationAwareOrderComparator}重新排序。
 	 */
-	private List<V> lookupBeans(K key, Class<V> clazz){
+	public List<V> lookupBeansCore(K key, Class<V> clazz){
 		Assert.notNull(key, "`key` must not be null.");
 
 		// 实际得到的是 `LinkedHashMap`
