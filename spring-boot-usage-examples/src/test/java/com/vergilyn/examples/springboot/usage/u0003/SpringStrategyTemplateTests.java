@@ -8,8 +8,10 @@ import com.vergilyn.examples.springboot.usage.u0003.generic.Generic;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.RequestEntity;
 import org.springframework.util.Assert;
@@ -49,6 +51,37 @@ import java.util.stream.Collectors;
  * }
  * </pre>
  *
+ * <pre> <b>特别注意，例如：</b>
+ * {@code
+ *   // IService<T>,  mybatis-plus
+ *   public interface SendRecordIService<K, T extends AbstractSendRecordEntity>
+ *       extends SpringStrategy<K>, IService<T>{
+ *
+ *   }
+ *
+ *   @Service
+ *   public class SendRecordEmailServiceImpl
+ * 		extends SendRecordIServiceImpl<MessageTypeEnum, EmailMapper, EmailEntity>
+ * 		implements SendRecordEmailService {
+ *
+ *   }
+ *
+ *   @Service
+ *   public class SendRecordSmsServiceImpl
+ * 		extends SendRecordIServiceImpl<MessageTypeEnum, SmsMapper, SmsEntity>
+ * 		implements SendRecordSmsService {
+ *
+ *   }
+ * }
+ *
+ * 根据spring特性，通过 {@code `new ParameterizedTypeReference<SendRecordIService<MessageTypeEnum, AbstractSendRecordEntity>>()`}
+ * （类似 {@code @Autowired(required = false) List<Generic<Number>> _numberGenerics}）
+ * <b>无法找到期望的spring-bean</b>，参考：{@link ListableBeanFactory#getBeanNamesForType(ResolvableType)}
+ *
+ * 可以写成 {@code `new ParameterizedTypeReference<SendRecordIService>()`} 用隐式强转换。
+ *
+ * </pre>
+ *
  * @author vergilyn
  * @since 2022-06-08
  */
@@ -85,14 +118,20 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 
 		print("List<Generic<?>> Origin-Spring-Generic-Autowired", _generics);
 
+		List<Generic<?>> expectedGenerics = filter(_generics, key);
+		print("List<Generic<?>> Origin-Spring-Generic-Autowired-Filter", expectedGenerics);
+
+
 		ParameterizedTypeReference<Generic<?>> typeReference = new ParameterizedTypeReference<Generic<?>>() {};
 
 		List<Generic<?>> generics = genericStrategy.lookupBeans(key, typeReference);
 		print("List<Generic<?>> Spring-Generic-Autowired", generics);
 
-		List<Generic<?>> notGenericAutowired = strategyTemplate.lookupBeans(key, typeReference, generic -> generic.getStrategyKey());
+		List<Generic<?>> notGenericAutowired = strategyTemplate.lookupBeans(key, typeReference, SpringStrategy::getStrategyKey);
 		print("List<Generic<?>> Not-Spring-Generic-Autowired", notGenericAutowired);
 
+		Assertions.assertIterableEquals(expectedGenerics, generics);
+		Assertions.assertIterableEquals(generics, notGenericAutowired);
 	}
 
 	/**
@@ -103,9 +142,7 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 		String key = StrategyKey.KEY_INTEGER;
 
 		// 保留 key 对应的 Generic.
-		List<Generic<?>> expectedGenerics = _generics.stream()
-				.filter(generic -> key.equals(generic.getStrategyKey()))
-				.collect(Collectors.toList());
+		List<Generic<?>> expectedGenerics = filter(_generics, key);
 
 		List<Generic<?>> generics = genericStrategy.lookupBeans(key, new ParameterizedTypeReference<Generic<?>>() {});
 		print("List<Generic<?>>", generics);
@@ -172,6 +209,13 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 		List<Generic<BigInteger>> bigIntegerGenerics = spyBigIntegerGenerics.lookupBeans(key, bigIntegerRef);
 		print("List<Generic<BigInteger>>", bigIntegerGenerics);
 
+	}
+
+	private List<Generic<?>> filter(List<Generic<?>> origin, String key){
+		// 保留 key 对应的 Generic.
+		return  origin.stream()
+				.filter(generic -> key.equals(generic.getStrategyKey()))
+				.collect(Collectors.toList());
 	}
 
 	private <K, V extends SpringStrategy<K>> List<V> lookupBeansByClass(K key, ParameterizedTypeReference<V> reference){
