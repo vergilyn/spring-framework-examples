@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * </pre>
  *
  * <p>
- * <h3>{@link SpringStrategyTemplate} VS {@link ChainInvokerSpringStrategyTemplate}</h3>
+ * <h3>{@link SpringStrategyTemplate} VS {@link ChainGenericClassSpringStrategy}</h3>
  * <p> 1. {@link SpringStrategyTemplate} 参考 {@link RestTemplate}，不使用spring的泛型依赖注入。
  * <pre>
  * // 调用者在注入时相对更简单（不再需要指明泛型），例如
@@ -56,13 +56,13 @@ import java.util.stream.Collectors;
 class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 
 	@Autowired
-	private ChainInvokerSpringStrategyTemplate<String, Generic<?>> genericStrategy;
+	private ChainGenericClassSpringStrategy<String, Generic<?>> genericStrategy;
 	@Autowired
-	private ChainInvokerSpringStrategyTemplate<String, Generic<Number>> numberGenericStrategy;
+	private ChainGenericClassSpringStrategy<String, Generic<Number>> numberGenericStrategy;
 	@Autowired
-	private ChainInvokerSpringStrategyTemplate<String, Generic<BigInteger>> bigIntegerGenericStrategy;
+	private ChainGenericClassSpringStrategy<String, Generic<BigInteger>> bigIntegerGenericStrategy;
 	@Autowired
-	private ChainInvokerSpringStrategyTemplate<String, Generic<BigIntegerExt>> bigIntegerExtGenericStrategy;
+	private ChainGenericClassSpringStrategy<String, Generic<BigIntegerExt>> bigIntegerExtGenericStrategy;
 
 	@Autowired
 	private List<Generic<?>> _generics;
@@ -76,6 +76,9 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 	@Autowired
 	private SpringStrategyTemplate strategyTemplate;
 
+	/**
+	 * <p> 2022-06-10，目前更推荐 {@code SpringStrategyTemplate} 的写法。（使用时相对更友好）
+	 */
 	@Test
 	public void compare(){
 		String key = StrategyKey.KEY_INTEGER;
@@ -150,7 +153,7 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 
 		String key = StrategyKey.KEY_INTEGER;
 
-		ChainInvokerSpringStrategyTemplate<String, Generic<Number>> spyNumberGenericStrategy = Mockito.spy(numberGenericStrategy);
+		ChainGenericClassSpringStrategy<String, Generic<Number>> spyNumberGenericStrategy = Mockito.spy(numberGenericStrategy);
 		ParameterizedTypeReference<Generic<Number>> numberRef = new ParameterizedTypeReference<Generic<Number>>() {};
 		Mockito.when(spyNumberGenericStrategy.lookupBeans(key, numberRef))
 				.then(invocation -> {
@@ -160,7 +163,7 @@ class SpringStrategyTemplateTests extends AbstractSpringStrategyTemplateTests {
 		print("List<Generic<Number>>", numberGenerics);
 
 
-		ChainInvokerSpringStrategyTemplate<String, Generic<BigInteger>> spyBigIntegerGenerics= Mockito.spy(bigIntegerGenericStrategy);
+		ChainGenericClassSpringStrategy<String, Generic<BigInteger>> spyBigIntegerGenerics= Mockito.spy(bigIntegerGenericStrategy);
 		ParameterizedTypeReference<Generic<BigInteger>> bigIntegerRef = new ParameterizedTypeReference<Generic<BigInteger>>() {};
 		Mockito.when(spyBigIntegerGenerics.lookupBeans(key, bigIntegerRef))
 				.then(invocation -> {

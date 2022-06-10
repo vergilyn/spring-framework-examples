@@ -1,6 +1,7 @@
 package com.vergilyn.examples.springboot.usage.u0003.core;
 
 import com.google.common.collect.Lists;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.ParameterizedTypeReference;
@@ -24,13 +25,13 @@ public class SpringStrategyBeanLookupUtils {
 	 * <p> 3. {@link ApplicationContext#getBeansOfType(Class)} 虽然是 {@link java.util.LinkedHashMap}，
 	 * 但是貌似不支持{@link Order}（支持 {@link Ordered}），所以用{@link AnnotationAwareOrderComparator}重新排序。
 	 */
-	public static <K, V> List<V> lookup(ApplicationContext context, K key, Class<V> clazz, Function<V, K> keyFunction) {
+	public static <K, V> List<V> lookup(ListableBeanFactory listableBeanFactory, K key, Class<V> clazz, Function<V, K> keyFunction) {
 		Assert.notNull(key, "`key` must not be null.");
 		Assert.notNull(clazz, "`clazz` must not be null.");
-		Assert.notNull(context, "`context` must not be null.");
+		Assert.notNull(listableBeanFactory, "`listableBeanFactory` must not be null.");
 
 		// 实际得到的是 `LinkedHashMap`
-		Map<String, V> beans = context.getBeansOfType(clazz);
+		Map<String, V> beans = listableBeanFactory.getBeansOfType(clazz);
 		if (beans == null || beans.isEmpty()) {
 			return Lists.newArrayList();
 		}
@@ -44,19 +45,23 @@ public class SpringStrategyBeanLookupUtils {
 		return list;
 	}
 
-	public static <K, V> List<V> lookup(ApplicationContext context, K key, ParameterizedTypeReference<V> typeReference, Function<V, K> keyFunction) {
+	public static <K, V> List<V> lookup(ListableBeanFactory listableBeanFactory, K key, ParameterizedTypeReference<V> typeReference, Function<V, K> keyFunction) {
+		Assert.notNull(key, "`key` must not be null.");
+		Assert.notNull(typeReference, "`typeReference` must not be null.");
+		Assert.notNull(listableBeanFactory, "`listableBeanFactory` must not be null.");
+
 		Type expectedType = typeReference.getType();
 		ResolvableType type = ResolvableType.forType(expectedType);
 
 		List<V> beans = Lists.newArrayList();
-		String[] candidateBeanNames = context.getBeanNamesForType(type);
+		String[] candidateBeanNames = listableBeanFactory.getBeanNamesForType(type);
 		if (candidateBeanNames == null || candidateBeanNames.length == 0){
 			return beans;
 		}
 
 		Class<V> requiredType = acquireRawClass(typeReference);
 		for (String candidateBeanName : candidateBeanNames) {
-			V bean = context.getBean(candidateBeanName, requiredType);
+			V bean = listableBeanFactory.getBean(candidateBeanName, requiredType);
 			if (key.equals(keyFunction.apply(bean))){
 				beans.add(bean);
 			}

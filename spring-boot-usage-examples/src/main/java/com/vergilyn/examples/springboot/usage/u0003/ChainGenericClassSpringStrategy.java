@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 由于泛型擦除，必须传递 class/ParameterizedTypeReference。并且，就算带有泛型注入的其实也是同一个单例对象。
+ * 由于泛型擦除，必须传递 class/ParameterizedTypeReference。并且，就算带有泛型注入的其实也是同一个singleton-bean。
  * 那么感觉与其这么写（类似 {@link RedisTemplate}），<b>更推荐用 {@link RestTemplate}</b> 的写法，
  * 参考：{@link SpringStrategyTemplate}
  *
@@ -29,8 +29,8 @@ import java.util.Optional;
  * @see RedisAutoConfiguration
  */
 @SuppressWarnings("JavadocReference")
-public class ChainInvokerSpringStrategyTemplate<K, V extends SpringStrategy<K>>
-		implements InvokerSpringStrategy<K, V>, ApplicationContextAware {
+public class ChainGenericClassSpringStrategy<K, V extends SpringStrategy<K>>
+		implements GenericClassSpringStrategy<K, V>, ApplicationContextAware {
 
 	private ApplicationContext applicationContext;
 

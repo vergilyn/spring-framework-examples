@@ -15,9 +15,9 @@ import java.util.function.Consumer;
  * @author vergilyn
  * @since 2022-06-08
  *
- * @see InvokerSpringStrategyOperations
+ * @see SpringStrategyOperations
  */
-public interface InvokerSpringStrategy<K, V> {
+public interface GenericClassSpringStrategy<K, V> {
 
 	List<V> lookupBeans(K key, Class<V> clazz);
 

@@ -12,7 +12,7 @@ public class StrategyAutowiredAutoConfiguration {
 	 * @see RedisAutoConfiguration#redisTemplate(org.springframework.data.redis.connection.RedisConnectionFactory)
 	 */
 	@Bean
-	public ChainInvokerSpringStrategyTemplate<Object, ?> chainAutowiredInvokerSpringStrategy(){
-		return new ChainInvokerSpringStrategyTemplate<>();
+	public ChainGenericClassSpringStrategy<Object, ?> chainAutowiredInvokerSpringStrategy(){
+		return new ChainGenericClassSpringStrategy<>();
 	}
 }

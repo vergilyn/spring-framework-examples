@@ -19,15 +19,20 @@ import java.util.function.Function;
  * @author vergilyn
  * @since 2022-06-09
  *
- * @see InvokerSpringStrategy
+ * @see GenericClassSpringStrategy
  */
-public interface InvokerSpringStrategyOperations {
+public interface SpringStrategyOperations {
 
 	<K, V> List<V> lookupBeans(K key, Class<V> clazz, Function<V, K> keyFunction);
 
 	<K, V> List<V> lookupBeans(K key, ParameterizedTypeReference<V> typeReference, Function<V, K> keyFunction);
 
-	default <K, V> V getHighestPriority(K key, Class<V> clazz, Function<V, K> keyFunction) {
+	/**
+	 * 获取匹配的<b>高优先级的bean</b>
+	 *
+	 * @see #getLowerBean(Object, Class, Function)
+	 */
+	default <K, V> V getHighestBean(K key, Class<V> clazz, Function<V, K> keyFunction) {
 		List<V> beans = lookupBeans(key, clazz, keyFunction);
 
 		if (beans.isEmpty()) {
@@ -37,7 +42,12 @@ public interface InvokerSpringStrategyOperations {
 		return beans.get(0);
 	}
 
-	default <K, V> V getLowerPriority(K key, Class<V> clazz, Function<V, K> keyFunction) {
+	/**
+	 * 获取匹配的<b>低优先级的bean</b>
+	 *
+	 * @see #getHighestBean(Object, Class, Function)
+	 */
+	default <K, V> V getLowerBean(K key, Class<V> clazz, Function<V, K> keyFunction) {
 		List<V> beans = lookupBeans(key, clazz, keyFunction);
 
 		if (beans.isEmpty()) {
@@ -47,8 +57,25 @@ public interface InvokerSpringStrategyOperations {
 		return beans.get(beans.size() - 1);
 	}
 
-	default <K, V> void invoke(K key, Class<V> clazz, Function<V, K> keyFunction, Consumer<V> invoker) {
+	/**
+	 * 根据 {@code 高优先级 > 低优先级} 的顺序调用。
+	 */
+	default <K, V> void invokeChainBeans(K key, Class<V> clazz, Function<V, K> keyFunction, Consumer<V> invoker) {
 		List<V> beans = lookupBeans(key, clazz, keyFunction);
+		if (beans == null){
+			return;
+		}
+
+		for (V bean : beans) {
+			invoker.accept(bean);
+		}
+	}
+
+	/**
+	 * 根据 {@code 高优先级 > 低优先级} 的顺序调用。
+	 */
+	default <K, V> void invokeChainBeans(K key, ParameterizedTypeReference<V> typeReference, Function<V, K> keyFunction, Consumer<V> invoker) {
+		List<V> beans = lookupBeans(key, typeReference, keyFunction);
 		if (beans == null){
 			return;
 		}
