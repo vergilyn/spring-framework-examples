@@ -34,7 +34,7 @@ import java.util.List;
  */
 @SuppressWarnings("JavadocReference")
 public class PathMatchingResourcePatternResolverTests extends AbstractSpringFeatureTests {
-	private String resourcePattern = "**/*.class";
+	private final String resourcePattern = "**/*.class";
 
 	private final ClassLoader _classLoader = this.getClass().getClassLoader();
 	private final PathMatchingResourcePatternResolver _resolver = new PathMatchingResourcePatternResolver(_classLoader);
@@ -82,14 +82,15 @@ public class PathMatchingResourcePatternResolverTests extends AbstractSpringFeat
 
 		for (Resource resource : resources) {
 			System.out.printf("%s >>>> \n", resource.getFilename());
-			// XXX 2022-06-28, 通过这种方法获取 class-name，然后再`Class.forName(...)`是否太麻烦了？
+			// 内部其实就是 spring实现 java ASM.
+			// 具体参考: org.springframework.core.type.classreading.SimpleMetadataReader#SimpleMetadataReader(...)
 			MetadataReader metadataReader = _metadataReaderFactory.getMetadataReader(resource);
 
 			// ClassMetadata & AnnotationMetadata 具体的区别是？
 			// 貌似更多的都是用 `AnnotationMetadata`
 			ClassMetadata classMetadata = metadataReader.getClassMetadata();
 			AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
-			//
+
 			// System.out.printf(" ClassMetadata: %s \n", JSON.toJSONString(classMetadata, true));
 			// System.out.printf(" AnnotationMetadata: %s \n", JSON.toJSONString(annotationMetadata, true));
 
@@ -153,7 +154,6 @@ public class PathMatchingResourcePatternResolverTests extends AbstractSpringFeat
 			}
 
 			actualClasses.add(clazz);
-
 
 		}
 
