@@ -1,0 +1,21 @@
+management:
+  # Deprecated A global security auto-configuration is now provided. Provide your own WebSecurityConfigurer bean instead.
+  #security:
+  #  enabled: false
+  server:
+    port: 18081
+    ssl:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+      cache:
+        time-to-live: 30s
+    httptrace:
+      enabled: true
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # * 在yaml 文件属于关键字，所以需要加引号

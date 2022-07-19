@@ -116,6 +116,8 @@ public class PathMatchingResourcePatternResolverTests extends AbstractSpringFeat
 	/**
 	 * 期望：找到 {@link com.alibaba.fastjson.serializer.SerializeFilter} 的所有实现类。
 	 * 不包括 interface/abstract-class，但包括 孙子辈 实现类。
+	 *
+	 * <p> 可以参考 `hutool-all, ClassUtil` （spring貌似没有提供工具类）
 	 */
 	@Test
 	@SneakyThrows

@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: spring-boot-shutdown-hook-examples
+
+  profiles:
+    active:
+      - actuator
+      - rocketmq
