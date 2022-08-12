@@ -3,7 +3,7 @@
 ## 问题描述
 服务器重启时，执行中的mq-listener-consumer未正确执行完成。
 
-例如，consumer中会请求 redis/database/dubbo/zmnMQSender 等资源，但是这些资源的connection被提前关闭了，导致consumer消费失败。
+例如，consumer中会请求 redis/database/dubbo/mq-sender 等资源，但是这些资源的connection被提前关闭了，导致consumer消费失败。
 
 但在实际业务系统中，**不一定可以简单的重复消费**。
 例如发送短信，请求短信平台接口已成功（用户收到了短信），但最后消息记录写入到MQ/database失败，因为connection被提前关闭。
@@ -75,8 +75,8 @@ public abstract class AbstractApplicationContext{
 
 主要需要关心 `ContextClosedEvent & destroyBeans()`。
 
-### mcs-sender shutdown
-#### mcs-sender mq-consumer未按期望执行完成分析
+### shutdown
+#### mq-consumer未按期望执行完成分析
 1. `destroyBeans()`
 ```text
 org.springframework.boot.autoconfigure.internalCachingMetadataReaderFactory,
@@ -193,7 +193,7 @@ public final class ThreadUtils {
 > 2. 如果还有新的任务被提交，线程池则会根据拒绝策略直接拒绝后续新提交的任务。
 > 3. （方法后）笤俑`isShutdown()`返回true，但`isTerminated()`返回false。
 
-由上可知，并未保证正在执行的consumer-thread 正确执行完成。例如 调用了shutdown，然后又触发`zmnMQSender#shutdown()`，会导致无法发送消息。
+由上可知，并未保证正在执行的consumer-thread 正确执行完成。例如 调用了shutdown，然后又触发`mq-sender#shutdown()`，会导致无法发送消息。
 
 #### 解决方式
 通过以上分析可知，现在想到的方案：
@@ -205,3 +205,88 @@ mq-consumer 优先处理shutdown信号，避免 redis/dubbo connection被提前c
 **备注**  
 1. 考虑是否通过`isTerminated()`强制等待 consumer消费完成。
 相对麻烦，由于都未提供`ConsumeMessageOrderlyService#consumeExecutor`的获取，可能需要通过反射获取。
+
+## 2022-07-21，`consumeExecutor & scheduledExecutorService`?
+
+### `scheduledExecutorService` 用途
+例如消费者抛出异常时，会返回` ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT`
+```java
+// DefaultRocketMQListenerContainer$DefaultMessageListenerOrderly
+public class DefaultMessageListenerOrderly implements MessageListenerOrderly {
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext context) {
+		for (MessageExt messageExt : msgs) {
+			log.debug("received msg: {}", messageExt);
+			try {
+				long now = System.currentTimeMillis();
+				
+				// 调用 `RocketMQListener#onMessage(...)`
+				handleMessage(messageExt);
+				
+				long costTime = System.currentTimeMillis() - now;
+				log.debug("consume {} cost: {} ms", messageExt.getMsgId(), costTime);
+			} catch (Exception e) {
+				log.warn("consume message failed. messageId:{}, topic:{}, reconsumeTimes:{}", messageExt.getMsgId(), messageExt.getTopic(), messageExt.getReconsumeTimes(), e);
+				
+				// suspendCurrentQueueTimeMillis 默认 1s。
+				context.setSuspendCurrentQueueTimeMillis(suspendCurrentQueueTimeMillis);
+				return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
+			}
+		}
+
+		return ConsumeOrderlyStatus.SUCCESS;
+	}
+}
+
+// - ConsumeMessageOrderlyService.ConsumeRequest#run(), LINE: 542
+// - ConsumeMessageOrderlyService#processConsumeResult(List, ConsumeOrderlyStatus, ConsumeOrderlyContext, ConsumeMessageOrderlyService.ConsumeRequest)}
+//    这里面会将消息失败的message，等待 1s后 重新消费。
+// - ConsumeMessageOrderlyService#scheduledExecutorService
+public class ConsumeMessageOrderlyService {
+	private void submitConsumeRequestLater(
+			final ProcessQueue processQueue,
+			final MessageQueue messageQueue,
+			final long suspendTimeMillis
+	) {
+		long timeMillis = suspendTimeMillis;
+		if (timeMillis == -1) {
+			timeMillis = this.defaultMQPushConsumer.getSuspendCurrentQueueTimeMillis();
+		}
+
+		if (timeMillis < 10) {
+			timeMillis = 10;
+		} else if (timeMillis > 30000) {
+			timeMillis = 30000;
+		}
+
+		this.scheduledExecutorService.schedule(new Runnable() {
+
+			@Override
+			public void run() {
+				ConsumeMessageOrderlyService.this.submitConsumeRequest(null, processQueue, messageQueue, true);
+			}
+		}, timeMillis, TimeUnit.MILLISECONDS);
+	}
+}
+```
+
+由上可知，`scheduledExecutorService` 其实也是 consumerExecutor。
+
+### 问题
+#### Q1.**那么为什么新版本中，scheduledExecutorService 没有进行 graceful-shutdown处理？**
+假设消息顺序依次是 task-1..N.
+例如 consumerExecutor 正在消费执行任务 1个(task-3)，已提交等待执行任务 2个(task-9,task-10)。
+scheduledExecutorService 正在消费执行任务 4个(task-1,task-2,task-4,task-5)，已提交等待执行任务 3个(task-6,task-7,task-8)。
+
+`awaitTerminateMillis`设置的刚好让 consumerExecutor 能保证 3个任务执行完成。
+如果所有任务执行耗时一样，这样不是会导致  scheduledExecutorService 中 1+3个任务（task-5..8） 执行失败？
+
+如果执行任务耗时差异较大，例如 task-4、task-5 重试执行成功，task-1&task-2 后执行成功
+
+#### Q2. 那么 MQ 记录的 offset 是？
+如果更新成`offset: 5`, 那么当task-1/task-2 实际是执行失败（或未消费）
+
+怎么避免？ 特别默认consumer是多线程消费，怎么提交修改的这个 offset？
+

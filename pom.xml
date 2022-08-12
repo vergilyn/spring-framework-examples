@@ -19,6 +19,7 @@
         <module>spring-retry-examples</module>
         <module>spring-boot-usage-examples</module>
         <module>spring-boot-shutdown-hook-examples</module>
+        <module>spring-event-listener-examples</module>
     </modules>
 
     <properties>
