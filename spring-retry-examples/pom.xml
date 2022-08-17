@@ -13,7 +13,10 @@
     <artifactId>spring-retry-examples</artifactId>
 
     <properties>
-        <version.spring-retry>1.3.2</version.spring-retry>
+        <!--<version.spring-retry>1.3.2</version.spring-retry>-->
+
+        <!-- java17 -->
+        <version.spring-retry>2.0.0-SNAPSHOT</version.spring-retry>
     </properties>
 
     <dependencies>

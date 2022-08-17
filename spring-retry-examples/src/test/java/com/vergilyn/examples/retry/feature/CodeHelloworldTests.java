@@ -39,6 +39,9 @@ public class CodeHelloworldTests extends AbstractSpringRetryTests {
 	}
 
 	/**
+	 * 2022-08-16, <a href="https://github.com/spring-projects/spring-retry/pull/289">GH-231: Support Retry Based on Result</a>
+	 * <br/> see：{@link RetryListener#onSuccess(RetryContext, RetryCallback, Object)}
+	 *
 	 * @see RetryTemplate#doExecute(RetryCallback, RecoveryCallback, RetryState)
 	 */
 	@SneakyThrows
@@ -111,6 +114,12 @@ public class CodeHelloworldTests extends AbstractSpringRetryTests {
 				Throwable throwable) {
 			log.warn("{} onError >>>> ", LOG_PREFIX);
 
+		}
+
+		// `spring-retry: 2.0.0-SNAPSHOT` 新增。
+		@Override
+		public <T, E extends Throwable> void onSuccess(RetryContext context, RetryCallback<T, E> callback, T result) {
+			RetryListener.super.onSuccess(context, callback, result);
 		}
 	}
 }
