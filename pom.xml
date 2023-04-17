@@ -121,7 +121,7 @@
         <apache-common-beanutils.version>1.9.4</apache-common-beanutils.version>
 
         <apache-common-csv.version>1.8</apache-common-csv.version>
-        <apache-common-text.version>1.9</apache-common-text.version>
+        <apache-common-text.version>1.10.0</apache-common-text.version>
 
         <apache-common-codec.version>1.15</apache-common-codec.version>
         <apache-common-pool2.version>2.6.1</apache-common-pool2.version>
