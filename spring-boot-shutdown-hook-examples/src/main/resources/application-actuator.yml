@@ -1,9 +1,12 @@
+server:
+  port: 18081
+
 management:
   # Deprecated A global security auto-configuration is now provided. Provide your own WebSecurityConfigurer bean instead.
   #security:
   #  enabled: false
   server:
-    port: 18081
+    port: ${server.port}
     ssl:
       enabled: false
   endpoint:

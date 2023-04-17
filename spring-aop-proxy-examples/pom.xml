@@ -3,27 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.vergilyn.examples.springframework</groupId>
         <artifactId>spring-framework-examples</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>spring-retry-examples</artifactId>
+    <artifactId>spring-aop-proxy-examples</artifactId>
 
-    <properties>
-        <!--<version.spring-retry>1.3.2</version.spring-retry>-->
 
-        <!-- java17 -->
-        <version.spring-retry>2.0.0</version.spring-retry>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.retry</groupId>
-            <artifactId>spring-retry</artifactId>
-            <version>${version.spring-retry}</version>
-        </dependency>
-    </dependencies>
 </project>
