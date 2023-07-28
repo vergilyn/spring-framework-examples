@@ -1,6 +1,0 @@
-spring:
-  application:
-    name: spring-boot-feature-examples
-  main:
-    allow-bean-definition-overriding: true
-    lazy-initialization: true

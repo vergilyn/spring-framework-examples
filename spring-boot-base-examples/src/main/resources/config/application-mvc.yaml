@@ -1,5 +1,0 @@
-#spring:
-#  mvc:
-#    static-path-pattern: /static/**
-#  resources:
-#    static-locations: classpath:/static/  # 静态资源的配置位置，可以写成一个数组配置多个目录

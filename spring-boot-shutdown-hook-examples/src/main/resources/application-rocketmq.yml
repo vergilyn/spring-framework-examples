@@ -1,8 +1,0 @@
-## SEE https://github.com/apache/rocketmq-spring
-## org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration
-rocketmq:
-  name-server: localhost:9876
-  access-channel: LOCAL
-
-  producer:
-    group: springboot_shutdown_hook_provider_group

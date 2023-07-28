@@ -1,6 +1,0 @@
-###
-GET http://localhost:18081/actuator
-
-
-###
-POST http://localhost:18081/actuator/shutdown

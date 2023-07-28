@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [logback-spring.xml配置文件](https://blog.csdn.net/xu_san_duo/article/details/80364600) -->
+<configuration scan="true" scanPeriod="10 seconds">
+    <contextName>logback</contextName>
+
+    <logger name="com.vergilyn.examples" level="debug"/>
+    <root level="info">
+    </root>
+
+</configuration>

@@ -1,0 +1,2 @@
+org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer=\
+  com.vergilyn.examples.spring.security.configuration.factories.CustomHttpSecurityConfigure

@@ -10,81 +10,9 @@
     <version>${revision}</version>
 
     <modules>
-        <module>spring-base-examples</module>
-        <module>spring-boot-base-examples</module>
-        <module>spring-spel-examples</module>
-        <module>spring-feature-examples</module>
-        <module>spring-boot-feature-examples</module>
-        <module>spring-cache-examples</module>
-        <module>spring-retry-examples</module>
-        <module>spring-boot-usage-examples</module>
-        <module>spring-boot-shutdown-hook-examples</module>
-        <module>spring-event-listener-examples</module>
-        <module>spring-aop-proxy-examples</module>
+        <module>spring-security-examples</module>
     </modules>
 
-    <!--<profiles>
-        <profile>
-            <id>spring</id>
-            <repositories>
-                <repository>
-                    <id>spring-snapshots</id>
-                    <name>Spring Snapshots</name>
-                    <url>https://repo.spring.io/libs-snapshot-local</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
-                    <id>spring-milestones</id>
-                    <name>Spring Milestones</name>
-                    <url>https://repo.spring.io/libs-milestone-local</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
-                    <id>spring-releases</id>
-                    <name>Spring Releases</name>
-                    <url>https://repo.spring.io/release</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>spring-snapshots</id>
-                    <name>Spring Snapshots</name>
-                    <url>https://repo.spring.io/libs-snapshot-local</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </pluginRepository>
-                <pluginRepository>
-                    <id>spring-milestones</id>
-                    <name>Spring Milestones</name>
-                    <url>https://repo.spring.io/libs-milestone-local</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-        <profile>
-            <id>strict</id>
-            <properties>
-                <maven.test.failure.ignore>false</maven.test.failure.ignore>
-            </properties>
-        </profile>
-        <profile>
-            <id>fast</id>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-                <maven.javadoc.skip>true</maven.javadoc.skip>
-            </properties>
-        </profile>
-    </profiles>-->
 
     <repositories>
         <repository>
@@ -101,19 +29,17 @@
     </repositories>
 
     <properties>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
 
         <revision>1.0.0-SNAPSHOT</revision>
 
-        <spring-boot-dependencies.version>2.2.13.RELEASE</spring-boot-dependencies.version>
-        <projectlombok.version>1.18.10</projectlombok.version>
-        <google-guava.version>30.0-jre</google-guava.version>
+        <spring-boot-dependencies.version>2.7.10</spring-boot-dependencies.version>
+        <projectlombok.version>1.18.26</projectlombok.version>
+        <google-guava.version>31.1-jre</google-guava.version>
         <alibaba-fastjson.version>1.2.83</alibaba-fastjson.version>
 
-        <alibaba-druid.version>1.2.4</alibaba-druid.version>
-        <mysql-connector-java.version>8.0.19</mysql-connector-java.version>
 
         <!-- apache-commons -->
         <apache-common-lang3.version>3.9</apache-common-lang3.version>
@@ -131,7 +57,7 @@
         <apache-common-collections4.version>4.4</apache-common-collections4.version>
 
         <!-- unit-test -->
-        <testng.version>7.1.0</testng.version>
+        <testng.version>7.7.0</testng.version>
         <mockito-core.version>3.7.7</mockito-core.version>
         <hamcrest.version>2.2</hamcrest.version>
 
@@ -189,16 +115,6 @@
                 <version>${apache-common-pool2.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${alibaba-druid.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -280,6 +196,10 @@
             <artifactId>hamcrest</artifactId>
             <version>${hamcrest.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
         </dependency>
     </dependencies>
 
