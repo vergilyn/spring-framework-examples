@@ -107,7 +107,7 @@
 
         <revision>1.0.0-SNAPSHOT</revision>
 
-        <spring-boot-dependencies.version>2.2.13.RELEASE</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>2.7.14</spring-boot-dependencies.version>
         <projectlombok.version>1.18.10</projectlombok.version>
         <google-guava.version>30.0-jre</google-guava.version>
         <alibaba-fastjson.version>1.2.83</alibaba-fastjson.version>
